@@ -1834,42 +1834,45 @@
   </div>
 
   <!-- Modal: Photo Lightbox (全螢幕帳單照片檢視器) -->
-  <div id="modalPhotoLightbox" class="fixed inset-0 bg-black/95 z-60 hidden flex flex-col justify-between p-3 sm:p-5 backdrop-blur-xs select-none">
+  <div id="modalPhotoLightbox" class="fixed inset-0 bg-black/95 hidden flex flex-col justify-between select-none" style="z-index: 99999; padding: max(env(safe-area-inset-top, 0px), 16px) 16px max(env(safe-area-inset-bottom, 0px), 20px) 16px;">
     <!-- Top Bar -->
-    <div class="flex items-center justify-between text-white z-10">
+    <div class="flex items-center justify-between text-white z-20 bg-stone-950/80 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/10 shadow-lg">
       <div class="flex items-center gap-2">
         <span class="text-base">🧾</span>
-        <span id="lightboxTitle" class="text-xs font-bold tracking-wide">帳單收據照片</span>
-        <span id="lightboxCounter" class="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-semibold">1 / 1</span>
+        <span id="lightboxTitle" class="text-xs font-bold tracking-wide text-stone-200">帳單收據照片</span>
+        <span id="lightboxCounter" class="bg-white/20 text-amber-300 px-2 py-0.5 rounded-full text-[10px] font-bold">1 / 1</span>
       </div>
       <div class="flex items-center gap-2">
-        <a id="lightboxDownloadBtn" href="#" target="_blank" rel="noopener noreferrer" class="text-xs text-white/90 hover:text-white bg-white/15 hover:bg-white/25 px-2.5 py-1 rounded-lg transition flex items-center gap-1 font-medium">
+        <a id="lightboxDownloadBtn" href="#" target="_blank" rel="noopener noreferrer" class="text-xs text-white/90 hover:text-white bg-white/15 hover:bg-white/25 px-2.5 py-1.5 rounded-full transition flex items-center gap-1 font-medium">
           <span>↗ 原圖</span>
         </a>
-        <button type="button" onclick="closePhotoLightbox()" class="flex items-center gap-1.5 bg-white text-stone-900 hover:bg-stone-100 px-3 py-1.5 rounded-full text-sm font-black shadow-xl border-2 border-stone-300 transition active:scale-95">
-          <span class="text-base leading-none">✕</span><span class="tracking-wide">關閉</span>
+        <button type="button" onclick="closePhotoLightbox()" class="flex items-center gap-1.5 bg-amber-400 text-stone-950 hover:bg-amber-300 px-3.5 py-1.5 rounded-full text-xs font-black shadow-xl transition active:scale-95 cursor-pointer">
+          <span class="text-sm font-black">✕</span><span>關閉</span>
         </button>
       </div>
     </div>
 
     <!-- Center Image View -->
-    <div class="relative flex-1 flex items-center justify-center p-2 min-h-0 overflow-hidden" onclick="if(event.target === this) closePhotoLightbox()">
-      <button type="button" id="lightboxPrevBtn" onclick="lightboxPrev()" class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/20">
+    <div class="relative flex-1 flex items-center justify-center p-2 min-h-0 overflow-hidden my-2" onclick="if(event.target === this) closePhotoLightbox()">
+      <button type="button" id="lightboxPrevBtn" onclick="lightboxPrev()" class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/30 shadow-lg">
         ‹
       </button>
-      <img id="lightboxImg" src="" alt="Receipt Photo" class="max-h-full max-w-full object-contain rounded-xl shadow-2xl transition-transform duration-200">
-      <button type="button" id="lightboxNextBtn" onclick="lightboxNext()" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/20">
+      <img id="lightboxImg" src="" alt="Receipt Photo" class="max-h-full max-w-full object-contain rounded-xl shadow-2xl transition-transform duration-200 cursor-zoom-in" onclick="if(event.target === this) event.stopPropagation();">
+      <button type="button" id="lightboxNextBtn" onclick="lightboxNext()" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/30 shadow-lg">
         ›
       </button>
     </div>
 
-    <!-- Bottom Thumbnail Strip -->
-    <div id="lightboxThumbStrip" class="flex items-center justify-center gap-2 pt-2 z-10 overflow-x-auto min-h-[56px]"></div>
-    <!-- Bottom Close Bar (mobile fallback) -->
-    <div class="flex justify-center pt-1 pb-0.5">
-      <button type="button" onclick="closePhotoLightbox()" class="text-xs text-white/70 hover:text-white flex items-center gap-1 px-4 py-1 rounded-full border border-white/20 hover:border-white/50 transition active:scale-95">
-        <span>✕</span><span>點此關閉</span>
-      </button>
+    <!-- Bottom Section: Thumbnails & Close Bar -->
+    <div class="flex flex-col gap-2 z-20">
+      <!-- Thumbnail Strip -->
+      <div id="lightboxThumbStrip" class="flex items-center justify-center gap-2 overflow-x-auto min-h-[48px]"></div>
+      <!-- Bottom Close Button Bar -->
+      <div class="flex justify-center">
+        <button type="button" onclick="closePhotoLightbox()" class="w-full max-w-xs py-2.5 bg-white/15 hover:bg-white/25 active:bg-white/30 text-white text-xs font-bold rounded-xl border border-white/20 backdrop-blur-md flex items-center justify-center gap-1.5 transition active:scale-98 shadow-md">
+          <span>✕</span><span>點此關閉檢視</span>
+        </button>
+      </div>
     </div>
   </div>
 
