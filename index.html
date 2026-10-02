@@ -5247,9 +5247,9 @@
                       <h4 class="font-bold text-sm text-stone-800 leading-tight truncate">${exp.title}</h4>
                       <span class="bg-purple-100 text-purple-900 border border-purple-300 px-1.5 py-0.2 rounded font-black text-[10px]">🛍️ 私帳</span>
                     </div>
-                    <div class="flex items-center gap-1.5 text-[11px] text-stone-400 mt-0.5">
-                      <span class="bg-stone-100 text-stone-700 px-1.5 py-0.2 rounded font-semibold border border-stone-200">📅 ${dateDisplay}</span>
-                      ${exp.hasCardFee ? '<span class="text-red-700 font-bold">• 1.5%手續費</span>' : ''}
+                    <div class="flex items-center gap-1.5 text-[11px] text-stone-400 mt-0.5 flex-wrap">
+                      <span class="bg-stone-100 text-stone-700 px-1.5 py-0.2 rounded font-semibold border border-stone-200 whitespace-nowrap">📅 ${dateDisplay}</span>
+                      ${exp.hasCardFee ? '<span class="text-red-700 font-bold whitespace-nowrap">• 1.5%</span>' : ''}
                     </div>
                   </div>
                 </div>
@@ -5339,7 +5339,7 @@
         const catNorm = normalizeCategory(exp.category);
         const cat = CATEGORIES.find(c => c.id === catNorm) || CATEGORIES[0];
         const payerObj = state.members.find(m => m.id === exp.paidBy);
-        const payerName = exp.paidBy === 'kitty' ? `🪙 公積金(${exp.currency === 'JPY' ? '日幣' : '台幣'})` : (payerObj ? `${payerObj.avatar} ${payerObj.name}` : '未知');
+        const payerName = exp.paidBy === 'kitty' ? `🪙 公(${exp.currency === 'JPY' ? '日幣' : '台幣'})` : (payerObj ? `${payerObj.avatar} ${payerObj.name}` : '未知');
         const dateDisplay = exp.date || (exp.createdAt ? new Date(exp.createdAt).toLocaleDateString('zh-TW') : '今日');
         
         let primaryAmountStr = '';
@@ -5368,11 +5368,11 @@
                   <div class="flex items-center gap-1.5">
                     <h4 class="font-bold text-sm text-stone-800 leading-tight truncate">${exp.title}</h4>
                   </div>
-                  <div class="flex items-center gap-1.5 text-[11px] text-stone-400 mt-0.5">
-                    <span class="bg-stone-100 text-stone-700 px-1.5 py-0.2 rounded font-semibold border border-stone-200">📅 ${dateDisplay}</span>
+                  <div class="flex items-center gap-1.5 text-[11px] text-stone-400 mt-0.5 flex-wrap">
+                    <span class="bg-stone-100 text-stone-700 px-1.5 py-0.2 rounded font-semibold border border-stone-200 whitespace-nowrap">📅 ${dateDisplay}</span>
                     <span>•</span>
-                    <span class="${exp.paidBy === 'kitty' ? 'text-amber-900 font-bold' : ''}">${payerName}</span>
-                    ${exp.hasCardFee ? '<span class="text-red-700 font-bold">• 1.5%手續費</span>' : ''}
+                    <span class="${exp.paidBy === 'kitty' ? 'text-amber-900 font-bold' : ''} whitespace-nowrap">${payerName}</span>
+                    ${exp.hasCardFee ? '<span class="text-red-700 font-bold whitespace-nowrap">• 1.5%</span>' : ''}
                   </div>
                 </div>
               </div>
