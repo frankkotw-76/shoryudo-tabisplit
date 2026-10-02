@@ -5044,8 +5044,33 @@
       if (counterEl) counterEl.textContent = `${currentIndex + 1} / ${photos.length}`;
       if (downloadEl) downloadEl.href = currentUrl;
 
-      if (prevBtn) prevBtn.style.display = photos.length > 1 ? 'flex' : 'none';
-      if (nextBtn) nextBtn.style.display = photos.length > 1 ? 'flex' : 'none';
+      if (photos.length > 1) {
+        if (prevBtn) {
+          prevBtn.style.display = 'flex';
+          prevBtn.innerHTML = '‹';
+          prevBtn.title = '上一張';
+          prevBtn.onclick = lightboxPrev;
+          prevBtn.className = 'absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/75 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/30 shadow-xl cursor-pointer active:scale-95';
+        }
+        if (nextBtn) {
+          nextBtn.style.display = 'flex';
+          nextBtn.innerHTML = '›';
+          nextBtn.title = '下一張';
+          nextBtn.onclick = lightboxNext;
+          nextBtn.className = 'absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/75 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/30 shadow-xl cursor-pointer active:scale-95';
+        }
+      } else {
+        if (prevBtn) {
+          prevBtn.style.display = 'none';
+        }
+        if (nextBtn) {
+          nextBtn.style.display = 'flex';
+          nextBtn.innerHTML = '<span class="text-base font-black leading-none">✕</span>';
+          nextBtn.title = '關閉照片檢視';
+          nextBtn.onclick = closePhotoLightbox;
+          nextBtn.className = 'absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-amber-400 hover:bg-amber-300 text-stone-950 flex items-center justify-center transition z-10 border-2 border-white shadow-2xl active:scale-95 cursor-pointer';
+        }
+      }
 
       if (thumbStrip) {
         if (photos.length > 1) {
