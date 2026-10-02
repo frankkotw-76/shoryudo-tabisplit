@@ -1846,8 +1846,8 @@
         <a id="lightboxDownloadBtn" href="#" target="_blank" rel="noopener noreferrer" class="text-xs text-white/90 hover:text-white bg-white/15 hover:bg-white/25 px-2.5 py-1 rounded-lg transition flex items-center gap-1 font-medium">
           <span>↗ 原圖</span>
         </a>
-        <button type="button" onclick="closePhotoLightbox()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-lg font-bold transition">
-          ✕
+        <button type="button" onclick="closePhotoLightbox()" class="flex items-center gap-1.5 bg-white text-stone-900 hover:bg-stone-100 px-3 py-1.5 rounded-full text-sm font-black shadow-xl border-2 border-stone-300 transition active:scale-95">
+          <span class="text-base leading-none">✕</span><span class="tracking-wide">關閉</span>
         </button>
       </div>
     </div>
@@ -1865,6 +1865,12 @@
 
     <!-- Bottom Thumbnail Strip -->
     <div id="lightboxThumbStrip" class="flex items-center justify-center gap-2 pt-2 z-10 overflow-x-auto min-h-[56px]"></div>
+    <!-- Bottom Close Bar (mobile fallback) -->
+    <div class="flex justify-center pt-1 pb-0.5">
+      <button type="button" onclick="closePhotoLightbox()" class="text-xs text-white/70 hover:text-white flex items-center gap-1 px-4 py-1 rounded-full border border-white/20 hover:border-white/50 transition active:scale-95">
+        <span>✕</span><span>點此關閉</span>
+      </button>
+    </div>
   </div>
 
   <!-- Toast Notification -->
