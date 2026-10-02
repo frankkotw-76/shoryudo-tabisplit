@@ -1834,12 +1834,12 @@
   </div>
 
   <!-- Modal: Photo Lightbox (全螢幕帳單照片檢視器) -->
-  <div id="modalPhotoLightbox" class="fixed inset-0 bg-black/95 hidden flex flex-col justify-between select-none" style="z-index: 99999; padding: max(env(safe-area-inset-top, 0px), 16px) 16px max(env(safe-area-inset-bottom, 0px), 20px) 16px;">
-    <!-- Top Bar -->
-    <div class="flex items-center justify-between text-white z-20 bg-stone-950/80 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/10 shadow-lg">
+  <div id="modalPhotoLightbox" class="fixed inset-0 bg-black/95 hidden select-none overflow-hidden" style="z-index: 99999; width: 100vw; height: 100vh; height: 100dvh;">
+    <!-- Top Bar (Fixed at top with iOS safe area) -->
+    <div class="absolute left-3 right-3 z-30 flex items-center justify-between text-white bg-stone-950/90 backdrop-blur-md px-3.5 py-2.5 rounded-2xl border border-white/15 shadow-2xl" style="top: max(env(safe-area-inset-top, 0px), 14px);">
       <div class="flex items-center gap-2">
         <span class="text-base">🧾</span>
-        <span id="lightboxTitle" class="text-xs font-bold tracking-wide text-stone-200">帳單收據照片</span>
+        <span id="lightboxTitle" class="text-xs font-bold tracking-wide text-stone-200 truncate max-w-[140px] sm:max-w-xs">帳單收據照片</span>
         <span id="lightboxCounter" class="bg-white/20 text-amber-300 px-2 py-0.5 rounded-full text-[10px] font-bold">1 / 1</span>
       </div>
       <div class="flex items-center gap-2">
@@ -1852,27 +1852,27 @@
       </div>
     </div>
 
-    <!-- Center Image View -->
-    <div class="relative flex-1 flex items-center justify-center p-2 min-h-0 overflow-hidden my-2" onclick="if(event.target === this) closePhotoLightbox()">
-      <button type="button" id="lightboxPrevBtn" onclick="lightboxPrev()" class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/30 shadow-lg">
-        ‹
-      </button>
+    <!-- Left / Right Side Floating Circle Buttons (Always centered on screen) -->
+    <button type="button" id="lightboxPrevBtn" onclick="lightboxPrev()" class="absolute left-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/80 hover:bg-black text-white flex items-center justify-center text-3xl font-bold transition z-30 border-2 border-white/40 shadow-2xl cursor-pointer active:scale-90">
+      ‹
+    </button>
+    <button type="button" id="lightboxNextBtn" onclick="lightboxNext()" class="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/80 hover:bg-black text-white flex items-center justify-center text-3xl font-bold transition z-30 border-2 border-white/40 shadow-2xl cursor-pointer active:scale-90">
+      ›
+    </button>
+
+    <!-- Center Image Area (Constrained between top bar and bottom bar) -->
+    <div class="absolute inset-0 z-10 flex items-center justify-center p-4 overflow-hidden" onclick="if(event.target === this) closePhotoLightbox()" style="top: 70px; bottom: 85px;">
       <img id="lightboxImg" src="" alt="Receipt Photo" class="max-h-full max-w-full object-contain rounded-xl shadow-2xl transition-transform duration-200 cursor-zoom-in" onclick="if(event.target === this) event.stopPropagation();">
-      <button type="button" id="lightboxNextBtn" onclick="lightboxNext()" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/70 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/30 shadow-lg">
-        ›
-      </button>
     </div>
 
-    <!-- Bottom Section: Thumbnails & Close Bar -->
-    <div class="flex flex-col gap-2 z-20">
+    <!-- Bottom Bar (Fixed at bottom with iOS safe area) -->
+    <div class="absolute left-3 right-3 z-30 flex flex-col items-center gap-2" style="bottom: max(env(safe-area-inset-bottom, 0px), 14px);">
       <!-- Thumbnail Strip -->
-      <div id="lightboxThumbStrip" class="flex items-center justify-center gap-2 overflow-x-auto min-h-[48px]"></div>
+      <div id="lightboxThumbStrip" class="flex items-center justify-center gap-2 overflow-x-auto min-h-[44px] max-w-full"></div>
       <!-- Bottom Close Button Bar -->
-      <div class="flex justify-center">
-        <button type="button" onclick="closePhotoLightbox()" class="w-full max-w-xs py-2.5 bg-white/15 hover:bg-white/25 active:bg-white/30 text-white text-xs font-bold rounded-xl border border-white/20 backdrop-blur-md flex items-center justify-center gap-1.5 transition active:scale-98 shadow-md">
-          <span>✕</span><span>點此關閉檢視</span>
-        </button>
-      </div>
+      <button type="button" onclick="closePhotoLightbox()" class="w-full max-w-xs py-2 bg-white/20 hover:bg-white/30 active:bg-white/40 text-white text-xs font-bold rounded-full border border-white/30 backdrop-blur-md flex items-center justify-center gap-1.5 transition active:scale-98 shadow-xl cursor-pointer">
+        <span class="text-sm font-bold">✕</span><span>點此關閉檢視</span>
+      </button>
     </div>
   </div>
 
@@ -5019,12 +5019,14 @@
       const modal = document.getElementById('modalPhotoLightbox');
       if (!modal) return;
       modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
       updateLightboxView();
     }
 
     function closePhotoLightbox() {
       const modal = document.getElementById('modalPhotoLightbox');
       if (modal) modal.classList.add('hidden');
+      document.body.style.overflow = '';
     }
 
     function updateLightboxView() {
@@ -5050,14 +5052,14 @@
           prevBtn.innerHTML = '‹';
           prevBtn.title = '上一張';
           prevBtn.onclick = lightboxPrev;
-          prevBtn.className = 'absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/75 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/30 shadow-xl cursor-pointer active:scale-95';
+          prevBtn.className = 'absolute left-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/80 hover:bg-black text-white flex items-center justify-center text-3xl font-bold transition z-30 border-2 border-white/40 shadow-2xl cursor-pointer active:scale-90';
         }
         if (nextBtn) {
           nextBtn.style.display = 'flex';
           nextBtn.innerHTML = '›';
           nextBtn.title = '下一張';
           nextBtn.onclick = lightboxNext;
-          nextBtn.className = 'absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/75 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/30 shadow-xl cursor-pointer active:scale-95';
+          nextBtn.className = 'absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/80 hover:bg-black text-white flex items-center justify-center text-3xl font-bold transition z-30 border-2 border-white/40 shadow-2xl cursor-pointer active:scale-90';
         }
       } else {
         if (prevBtn) {
@@ -5065,10 +5067,10 @@
         }
         if (nextBtn) {
           nextBtn.style.display = 'flex';
-          nextBtn.innerHTML = '<span class="text-base font-black leading-none">✕</span>';
+          nextBtn.innerHTML = '<span class="text-xl font-black text-stone-950 leading-none">✕</span>';
           nextBtn.title = '關閉照片檢視';
           nextBtn.onclick = closePhotoLightbox;
-          nextBtn.className = 'absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-amber-400 hover:bg-amber-300 text-stone-950 flex items-center justify-center transition z-10 border-2 border-white shadow-2xl active:scale-95 cursor-pointer';
+          nextBtn.className = 'absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-amber-400 hover:bg-amber-300 text-stone-950 flex items-center justify-center transition z-30 border-2 border-white shadow-2xl active:scale-90 cursor-pointer';
         }
       }
 
