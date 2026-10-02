@@ -5577,6 +5577,7 @@
 
       if (!state.itinerary) state.itinerary = [];
 
+      const itemId = (idInput && idInput.value) ? idInput.value : ('iti_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4));
       const existingIdx = state.itinerary.findIndex(x => x.id === itemId);
       const existingItem = existingIdx !== -1 ? state.itinerary[existingIdx] : null;
       const createdBy = existingItem && existingItem.createdBy ? existingItem.createdBy : (state.myMemberId || 'm1');
