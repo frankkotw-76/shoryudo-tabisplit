@@ -5689,7 +5689,6 @@
     function renderItineraryTab() {
       const container = document.getElementById('itineraryContainer');
       const summaryTextEl = document.getElementById('itineraryDaySummaryText');
-      const expenseSummaryEl = document.getElementById('itineraryDayExpenseSummary');
       if (!container) return;
 
       const currentDay = state.currentItineraryDay || 0;
@@ -5730,7 +5729,6 @@
             if (scoreA !== scoreB) return scoreA - scoreB;
             return (a.updatedAt || 0) - (b.updatedAt || 0);
           });
-        const dayExpense = expensesByDate[dMeta.date] || 0;
 
         return `
           <!-- Day Section: D${dMeta.day} -->
