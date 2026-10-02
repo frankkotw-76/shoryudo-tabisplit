@@ -1,0 +1,16 @@
+{
+  "name": "昇龍道賞楓遊 🍁",
+  "short_name": "昇龍道賞楓遊 🍁",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FAF6F0",
+  "theme_color": "#7F1D1D",
+  "description": "6人日本昇龍道秋季賞楓7天自由行手機分帳神器，支援台幣/日幣雙幣別、公積金現金池、秋色紅葉視覺、LINE一鍵同步與最佳結算。",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237f1d1d'/><text y='65' font-size='60' x='20'>🍁</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
