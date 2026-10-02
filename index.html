@@ -275,6 +275,34 @@
           </div>
         </div>
 
+        <!-- Receipt Photos (Cloudinary, max 3 photos) -->
+        <div class="bg-stone-50/80 p-3 rounded-2xl border border-stone-200/90 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-1.5 text-xs font-bold text-stone-700">
+              <span>📷</span>
+              <span>帳單 / 收據照片</span>
+              <span class="text-[10px] text-stone-400 font-normal">(選填，最多 3 張)</span>
+            </div>
+            <span id="newExpensePhotoCount" class="text-[11px] font-bold text-stone-500">0 / 3</span>
+          </div>
+
+          <!-- Hidden File Input -->
+          <input type="file" id="inputNewExpensePhoto" accept="image/*" multiple onchange="handlePhotoUploadInput(event, 'new')" class="hidden">
+
+          <!-- Photo Previews & Add Button Grid -->
+          <div id="newExpensePhotoGrid" class="flex flex-wrap gap-2 items-center">
+            <button type="button" onclick="document.getElementById('inputNewExpensePhoto').click()" class="w-16 h-16 rounded-xl border-2 border-dashed border-stone-300 hover:border-red-600 bg-white hover:bg-stone-50 flex flex-col items-center justify-center text-stone-500 hover:text-red-700 transition shadow-2xs">
+              <span class="text-lg">📷</span>
+              <span class="text-[9px] font-bold mt-0.5">+ 拍照/圖</span>
+            </button>
+          </div>
+
+          <div id="newExpensePhotoUploadStatus" class="hidden text-xs text-amber-700 bg-amber-50 p-2 rounded-xl border border-amber-200 flex items-center gap-2">
+            <svg class="animate-spin h-4 w-4 text-amber-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+            <span id="newExpensePhotoStatusText">正在上傳照片至雲端...</span>
+          </div>
+        </div>
+
         <!-- Submit Button -->
         <button type="button" id="btnSubmitExpense" onclick="saveExpense()" class="w-full bg-gradient-to-r from-red-800 via-red-700 to-amber-700 active:from-red-900 active:to-amber-800 text-amber-50 font-bold py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2 text-base border border-red-900/20 box-border">
           <span id="btnSubmitExpenseIcon">🍁</span>
@@ -1203,11 +1231,24 @@
         </button>
         <div id="changelogAccordion" class="hidden px-4 pb-4 pt-1 border-t border-stone-100 space-y-3 text-xs text-stone-600">
           
-          <!-- v2.4 -->
+          <!-- v2.5 -->
           <div class="space-y-1 border-l-2 border-red-700 pl-3">
             <div class="flex items-center gap-2">
-              <span class="font-black text-xs text-stone-800">v2.4 (最新版)</span>
+              <span class="font-black text-xs text-stone-800">v2.5 (最新版)</span>
               <span class="text-[9px] bg-red-100 text-red-800 font-bold px-1.5 py-0.2 rounded">Current</span>
+            </div>
+            <p class="text-[11px] text-stone-500 leading-relaxed">
+              • 📸 <strong>Cloudinary 帳單照片整合（每筆最多 3 張）</strong>：支援手機即時拍照／相簿選圖上傳收據，全員 6 人皆可上傳。<br>
+              • 🔍 <strong>全螢幕相片燈箱檢視（Lightbox）</strong>：在支出明細點擊縮圖即可全螢幕預覽原圖、多張滑動切換與查看原圖。<br>
+              • ✏️ <strong>修改與刪除同步</strong>：編輯支出時可隨時增減照片；刪除支出時照片紀錄同步移除，不佔用本機容量。<br>
+              • 📊 <strong>明細日期排序與匯出優化</strong>：公帳明細自動按消費日期由新至舊排序，公帳 CSV 匯出自動排除私密帳目。
+            </p>
+          </div>
+
+          <!-- v2.4 -->
+          <div class="space-y-1 border-l-2 border-stone-300 pl-3">
+            <div class="flex items-center gap-2">
+              <span class="font-black text-xs text-stone-800">v2.4</span>
             </div>
             <p class="text-[11px] text-stone-500 leading-relaxed">
               • 🗺️ <strong>全新 7 天行程表（D1～D7 ＋ 全覽）</strong>：預填昇龍道 38 筆景點、住宿、交通與美食完整清單。<br>
@@ -1502,6 +1543,34 @@
         </p>
       </div>
 
+      <!-- Receipt Photos for Edit Modal -->
+      <div class="bg-stone-50/80 p-3 rounded-2xl border border-stone-200/90 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-1.5 text-xs font-bold text-stone-700">
+            <span>📷</span>
+            <span>帳單 / 收據照片</span>
+            <span class="text-[10px] text-stone-400 font-normal">(最多 3 張)</span>
+          </div>
+          <span id="editExpensePhotoCount" class="text-[11px] font-bold text-stone-500">0 / 3</span>
+        </div>
+
+        <!-- Hidden File Input for Edit -->
+        <input type="file" id="inputEditExpensePhoto" accept="image/*" multiple onchange="handlePhotoUploadInput(event, 'edit')" class="hidden">
+
+        <!-- Photo Previews & Add Button Grid -->
+        <div id="editExpensePhotoGrid" class="flex flex-wrap gap-2 items-center">
+          <button type="button" onclick="document.getElementById('inputEditExpensePhoto').click()" class="w-16 h-16 rounded-xl border-2 border-dashed border-stone-300 hover:border-red-600 bg-white hover:bg-stone-50 flex flex-col items-center justify-center text-stone-500 hover:text-red-700 transition shadow-2xs">
+            <span class="text-lg">📷</span>
+            <span class="text-[9px] font-bold mt-0.5">+ 拍照/圖</span>
+          </button>
+        </div>
+
+        <div id="editExpensePhotoUploadStatus" class="hidden text-xs text-amber-700 bg-amber-50 p-2 rounded-xl border border-amber-200 flex items-center gap-2">
+          <svg class="animate-spin h-4 w-4 text-amber-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+            <span id="editExpensePhotoStatusText">正在上傳照片至雲端...</span>
+        </div>
+      </div>
+
       <!-- Buttons -->
       <div class="flex gap-2 pt-1">
         <button type="button" onclick="closeModal('modalEditExpense')" class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-2.5 rounded-xl text-xs transition box-border h-11">取消</button>
@@ -1764,6 +1833,40 @@
     </div>
   </div>
 
+  <!-- Modal: Photo Lightbox (全螢幕帳單照片檢視器) -->
+  <div id="modalPhotoLightbox" class="fixed inset-0 bg-black/95 z-60 hidden flex flex-col justify-between p-3 sm:p-5 backdrop-blur-xs select-none">
+    <!-- Top Bar -->
+    <div class="flex items-center justify-between text-white z-10">
+      <div class="flex items-center gap-2">
+        <span class="text-base">🧾</span>
+        <span id="lightboxTitle" class="text-xs font-bold tracking-wide">帳單收據照片</span>
+        <span id="lightboxCounter" class="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-semibold">1 / 1</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <a id="lightboxDownloadBtn" href="#" target="_blank" rel="noopener noreferrer" class="text-xs text-white/90 hover:text-white bg-white/15 hover:bg-white/25 px-2.5 py-1 rounded-lg transition flex items-center gap-1 font-medium">
+          <span>↗ 原圖</span>
+        </a>
+        <button type="button" onclick="closePhotoLightbox()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-lg font-bold transition">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- Center Image View -->
+    <div class="relative flex-1 flex items-center justify-center p-2 min-h-0 overflow-hidden" onclick="if(event.target === this) closePhotoLightbox()">
+      <button type="button" id="lightboxPrevBtn" onclick="lightboxPrev()" class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/20">
+        ‹
+      </button>
+      <img id="lightboxImg" src="" alt="Receipt Photo" class="max-h-full max-w-full object-contain rounded-xl shadow-2xl transition-transform duration-200">
+      <button type="button" id="lightboxNextBtn" onclick="lightboxNext()" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center text-2xl font-bold transition z-10 border border-white/20">
+        ›
+      </button>
+    </div>
+
+    <!-- Bottom Thumbnail Strip -->
+    <div id="lightboxThumbStrip" class="flex items-center justify-center gap-2 pt-2 z-10 overflow-x-auto min-h-[56px]"></div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 bg-stone-900/90 text-amber-50 text-xs font-medium px-4 py-2 rounded-full shadow-lg pointer-events-none transition-opacity duration-300 opacity-0 z-50 flex items-center gap-1.5 border border-amber-500/20">
     <span id="toastIcon">🍁</span>
@@ -1805,6 +1908,11 @@
       apiUrl: 'https://api.netlify.com/api/v1/sites/64fc17d8-883b-4350-aab7-3b455417eace/metadata',
       pollIntervalMs: 12000
     };
+
+    // Cloudinary Configuration for Receipt Photo Uploads
+    const CLOUDINARY_CLOUD_NAME = 'h3idg7if';
+    const CLOUDINARY_UPLOAD_PRESET = 'tabisplit-receipts';
+    const MAX_EXPENSE_PHOTOS = 3;
 
     // 7-Day Itinerary Data (10/15 四 ～ 10/21 三)
     const DEFAULT_ITINERARY = [
@@ -1897,7 +2005,8 @@
       encryptedPrivateVaults: {},
       isPrivateUnlocked: false,
       activePrivatePin: null,
-      privatePinHint: ''
+      privatePinHint: '',
+      tempNewExpensePhotos: []
     };
 
     const STORAGE_KEY = 'tabisplit_shoryudo_v5_cloud';
@@ -3082,6 +3191,7 @@
       renderCategoryGrid();
       renderPayerGrid();
       renderSplitGrid();
+      renderNewExpensePhotos();
       renderExpenseList();
       renderItineraryTab();
       renderAnalyticsDashboard();
@@ -4056,6 +4166,8 @@
       const hasCardFee = document.getElementById('checkCardFee').checked;
       const finalAmount = hasCardFee ? Math.round(amountRaw * 1.015) : amountRaw;
 
+      const attachedPhotos = (state.tempNewExpensePhotos && state.tempNewExpensePhotos.length > 0) ? [...state.tempNewExpensePhotos] : [];
+
       if (isPrivate) {
         const expense = {
           id: 'exp_priv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -4071,6 +4183,8 @@
           splitMembers: [state.myMemberId],
           isPrivate: true,
           ownerMemberId: state.myMemberId,
+          photos: attachedPhotos,
+          photoUrl: attachedPhotos[0] || '',
           createdAt: Date.now()
         };
 
@@ -4079,6 +4193,9 @@
         state.expenses.unshift(expense);
 
         localStorage.setItem(`tabisplit_private_expenses_${state.myMemberId}`, JSON.stringify(state.privateExpenses));
+
+        state.tempNewExpensePhotos = [];
+        renderNewExpensePhotos();
 
         document.getElementById('inputAmount').value = '';
         document.getElementById('inputTitle').value = '';
@@ -4119,11 +4236,16 @@
         paidBy: state.currentPayer,
         splitMembers: splitMembers,
         isPrivate: false,
+        photos: attachedPhotos,
+        photoUrl: attachedPhotos[0] || '',
         createdAt: Date.now()
       };
 
       state.expenses.unshift(expense);
       saveStateToStorage();
+
+      state.tempNewExpensePhotos = [];
+      renderNewExpensePhotos();
 
       document.getElementById('inputAmount').value = '';
       document.getElementById('inputTitle').value = '';
@@ -4713,6 +4835,235 @@
       renderExpenseList();
     }
 
+    // ==================== CLOUDINARY RECEIPT PHOTO FUNCTIONS ====================
+    const lightboxState = {
+      photos: [],
+      currentIndex: 0,
+      title: ''
+    };
+
+    async function uploadReceiptFileToCloudinary(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      formData.append('folder', 'tabisplit');
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData?.error?.message || `上傳失敗 (${res.status})`);
+      }
+
+      const data = await res.json();
+      return data.secure_url;
+    }
+
+    async function handlePhotoUploadInput(event, targetContext) {
+      const files = Array.from(event.target.files || []);
+      if (files.length === 0) return;
+
+      const currentPhotos = targetContext === 'edit'
+        ? (editExpenseState.photos || [])
+        : (state.tempNewExpensePhotos || []);
+
+      const availableSlots = MAX_EXPENSE_PHOTOS - currentPhotos.length;
+      if (availableSlots <= 0) {
+        showToast(`每筆支出最多僅能上傳 ${MAX_EXPENSE_PHOTOS} 張照片！`, '⚠️');
+        event.target.value = '';
+        return;
+      }
+
+      const filesToUpload = files.slice(0, availableSlots);
+      if (files.length > availableSlots) {
+        showToast(`最多僅能再加入 ${availableSlots} 張照片，已自動為您選取前 ${availableSlots} 張`, 'ℹ️');
+      }
+
+      const statusEl = document.getElementById(targetContext === 'edit' ? 'editExpensePhotoUploadStatus' : 'newExpensePhotoUploadStatus');
+      const statusText = document.getElementById(targetContext === 'edit' ? 'editExpensePhotoStatusText' : 'newExpensePhotoStatusText');
+      if (statusEl) statusEl.classList.remove('hidden');
+
+      let successCount = 0;
+      for (let i = 0; i < filesToUpload.length; i++) {
+        const file = filesToUpload[i];
+        if (statusText) statusText.textContent = `正在上傳照片 (${i + 1}/${filesToUpload.length}) 至雲端...`;
+        try {
+          const url = await uploadReceiptFileToCloudinary(file);
+          if (targetContext === 'edit') {
+            if (!editExpenseState.photos) editExpenseState.photos = [];
+            editExpenseState.photos.push(url);
+            renderEditExpensePhotos();
+          } else {
+            if (!state.tempNewExpensePhotos) state.tempNewExpensePhotos = [];
+            state.tempNewExpensePhotos.push(url);
+            renderNewExpensePhotos();
+          }
+          successCount++;
+        } catch (err) {
+          console.error('Cloudinary upload error:', err);
+          showToast(`照片「${file.name}」上傳失敗：${err.message}`, '❌');
+        }
+      }
+
+      if (statusEl) statusEl.classList.add('hidden');
+      event.target.value = '';
+
+      if (successCount > 0) {
+        showToast(`成功上傳 ${successCount} 張帳單照片！`, '📸');
+      }
+    }
+
+    function removeExpensePhoto(index, targetContext) {
+      if (targetContext === 'edit') {
+        if (editExpenseState.photos && editExpenseState.photos[index] !== undefined) {
+          editExpenseState.photos.splice(index, 1);
+          renderEditExpensePhotos();
+        }
+      } else {
+        if (state.tempNewExpensePhotos && state.tempNewExpensePhotos[index] !== undefined) {
+          state.tempNewExpensePhotos.splice(index, 1);
+          renderNewExpensePhotos();
+        }
+      }
+    }
+
+    function renderNewExpensePhotos() {
+      const photos = state.tempNewExpensePhotos || [];
+      const countEl = document.getElementById('newExpensePhotoCount');
+      const gridEl = document.getElementById('newExpensePhotoGrid');
+      if (countEl) countEl.textContent = `${photos.length} / ${MAX_EXPENSE_PHOTOS}`;
+      if (!gridEl) return;
+
+      let html = photos.map((url, idx) => `
+        <div class="relative w-16 h-16 rounded-xl overflow-hidden border-2 border-amber-500 shadow-sm group bg-stone-100 flex-shrink-0">
+          <img src="${url}" onclick="openPhotoLightbox(state.tempNewExpensePhotos, ${idx}, '新支出收據預覽')" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition" alt="Receipt ${idx+1}">
+          <button type="button" onclick="removeExpensePhoto(${idx}, 'new')" class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/70 hover:bg-red-600 text-white flex items-center justify-center text-[10px] font-bold shadow transition" title="刪除照片">
+            ✕
+          </button>
+        </div>
+      `).join('');
+
+      if (photos.length < MAX_EXPENSE_PHOTOS) {
+        html += `
+          <button type="button" onclick="document.getElementById('inputNewExpensePhoto').click()" class="w-16 h-16 rounded-xl border-2 border-dashed border-stone-300 hover:border-red-600 bg-white hover:bg-stone-50 flex flex-col items-center justify-center text-stone-500 hover:text-red-700 transition shadow-2xs flex-shrink-0">
+            <span class="text-lg">📷</span>
+            <span class="text-[9px] font-bold mt-0.5">+ 拍照/圖</span>
+          </button>
+        `;
+      }
+      gridEl.innerHTML = html;
+    }
+
+    function renderEditExpensePhotos() {
+      const photos = editExpenseState.photos || [];
+      const countEl = document.getElementById('editExpensePhotoCount');
+      const gridEl = document.getElementById('editExpensePhotoGrid');
+      if (countEl) countEl.textContent = `${photos.length} / ${MAX_EXPENSE_PHOTOS}`;
+      if (!gridEl) return;
+
+      let html = photos.map((url, idx) => `
+        <div class="relative w-16 h-16 rounded-xl overflow-hidden border-2 border-amber-500 shadow-sm group bg-stone-100 flex-shrink-0">
+          <img src="${url}" onclick="openPhotoLightbox(editExpenseState.photos, ${idx}, '支出收據照片')" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition" alt="Receipt ${idx+1}">
+          <button type="button" onclick="removeExpensePhoto(${idx}, 'edit')" class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/70 hover:bg-red-600 text-white flex items-center justify-center text-[10px] font-bold shadow transition" title="刪除照片">
+            ✕
+          </button>
+        </div>
+      `).join('');
+
+      if (photos.length < MAX_EXPENSE_PHOTOS) {
+        html += `
+          <button type="button" onclick="document.getElementById('inputEditExpensePhoto').click()" class="w-16 h-16 rounded-xl border-2 border-dashed border-stone-300 hover:border-red-600 bg-white hover:bg-stone-50 flex flex-col items-center justify-center text-stone-500 hover:text-red-700 transition shadow-2xs flex-shrink-0">
+            <span class="text-lg">📷</span>
+            <span class="text-[9px] font-bold mt-0.5">+ 拍照/圖</span>
+          </button>
+        `;
+      }
+      gridEl.innerHTML = html;
+    }
+
+    function renderExpenseCardPhotos(photos, title) {
+      if (!Array.isArray(photos) || photos.length === 0) return '';
+      const safeTitle = (title || '支出收據').replace(/'/g, "\\'");
+      const photosJson = JSON.stringify(photos).replace(/"/g, '&quot;');
+      return `
+        <div class="flex items-center gap-2 pt-1 overflow-x-auto pb-0.5">
+          ${photos.map((url, idx) => `
+            <div onclick="event.stopPropagation(); openPhotoLightbox(${photosJson}, ${idx}, '${safeTitle}')" class="relative w-11 h-11 rounded-xl overflow-hidden border border-amber-300/80 flex-shrink-0 cursor-pointer hover:opacity-90 shadow-2xs group bg-stone-100">
+              <img src="${url}" class="w-full h-full object-cover" alt="receipt">
+              <span class="absolute bottom-0 right-0 bg-black/60 text-[8px] text-white px-1 rounded-tl font-bold">🔍</span>
+            </div>
+          `).join('')}
+          <span class="text-[10px] text-amber-800 font-semibold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md flex-shrink-0">📷 ${photos.length}張收據</span>
+        </div>
+      `;
+    }
+
+    function openPhotoLightbox(photos, startIndex = 0, title = '帳單收據照片') {
+      if (!photos || (Array.isArray(photos) && photos.length === 0)) return;
+      lightboxState.photos = Array.isArray(photos) ? photos : [photos];
+      lightboxState.currentIndex = Math.max(0, Math.min(startIndex, lightboxState.photos.length - 1));
+      lightboxState.title = title;
+
+      const modal = document.getElementById('modalPhotoLightbox');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      updateLightboxView();
+    }
+
+    function closePhotoLightbox() {
+      const modal = document.getElementById('modalPhotoLightbox');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function updateLightboxView() {
+      const { photos, currentIndex, title } = lightboxState;
+      const currentUrl = photos[currentIndex];
+
+      const imgEl = document.getElementById('lightboxImg');
+      const titleEl = document.getElementById('lightboxTitle');
+      const counterEl = document.getElementById('lightboxCounter');
+      const downloadEl = document.getElementById('lightboxDownloadBtn');
+      const prevBtn = document.getElementById('lightboxPrevBtn');
+      const nextBtn = document.getElementById('lightboxNextBtn');
+      const thumbStrip = document.getElementById('lightboxThumbStrip');
+
+      if (imgEl) imgEl.src = currentUrl;
+      if (titleEl) titleEl.textContent = title;
+      if (counterEl) counterEl.textContent = `${currentIndex + 1} / ${photos.length}`;
+      if (downloadEl) downloadEl.href = currentUrl;
+
+      if (prevBtn) prevBtn.style.display = photos.length > 1 ? 'flex' : 'none';
+      if (nextBtn) nextBtn.style.display = photos.length > 1 ? 'flex' : 'none';
+
+      if (thumbStrip) {
+        if (photos.length > 1) {
+          thumbStrip.classList.remove('hidden');
+          thumbStrip.innerHTML = photos.map((url, idx) => `
+            <img src="${url}" onclick="lightboxState.currentIndex = ${idx}; updateLightboxView();" class="w-11 h-11 object-cover rounded-lg border-2 cursor-pointer transition ${
+              idx === currentIndex ? 'border-amber-400 scale-105 shadow-md' : 'border-white/30 opacity-60 hover:opacity-100'
+            }">
+          `).join('');
+        } else {
+          thumbStrip.classList.add('hidden');
+        }
+      }
+    }
+
+    function lightboxNext() {
+      if (lightboxState.photos.length <= 1) return;
+      lightboxState.currentIndex = (lightboxState.currentIndex + 1) % lightboxState.photos.length;
+      updateLightboxView();
+    }
+
+    function lightboxPrev() {
+      if (lightboxState.photos.length <= 1) return;
+      lightboxState.currentIndex = (lightboxState.currentIndex - 1 + lightboxState.photos.length) % lightboxState.photos.length;
+      updateLightboxView();
+    }
+
     function renderExpenseList() {
       const isPrivateMode = state.listViewMode === 'private';
       const myMember = state.members.find(m => m.id === state.myMemberId) || state.members[0];
@@ -4908,6 +5259,8 @@
                 </div>
               </div>
 
+              ${renderExpenseCardPhotos(exp.photos || (exp.photoUrl ? [exp.photoUrl] : []), exp.title)}
+
               <div class="pt-2 border-t border-purple-100 flex items-center justify-end text-xs text-stone-500">
                 <div class="flex items-center space-x-2 flex-shrink-0">
                   <button onclick="openEditExpenseModal('${exp.id}')" class="text-purple-700 hover:text-purple-950 p-1 flex items-center gap-1 text-[11px] font-bold transition">
@@ -5028,6 +5381,8 @@
                 <div class="text-[11px] text-stone-400">${secondaryAmountStr}</div>
               </div>
             </div>
+
+            ${renderExpenseCardPhotos(exp.photos || (exp.photoUrl ? [exp.photoUrl] : []), exp.title)}
 
             <div class="pt-2 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
               <span class="truncate max-w-[210px] text-[11px]">
@@ -5464,7 +5819,8 @@
       category: 'food',
       payer: 'm1',
       splitInclusions: {},
-      isPrivate: false
+      isPrivate: false,
+      photos: []
     };
 
     function openEditExpenseModal(id) {
@@ -5477,6 +5833,14 @@
       editExpenseState.payer = exp.paidBy;
       editExpenseState.isPrivate = !!exp.isPrivate;
       
+      if (Array.isArray(exp.photos)) {
+        editExpenseState.photos = [...exp.photos];
+      } else if (exp.photoUrl) {
+        editExpenseState.photos = [exp.photoUrl];
+      } else {
+        editExpenseState.photos = [];
+      }
+
       editExpenseState.splitInclusions = {};
       state.members.forEach(m => {
         editExpenseState.splitInclusions[m.id] = (exp.splitMembers || []).includes(m.id);
@@ -5490,6 +5854,7 @@
 
       setEditExpenseCurrency(editExpenseState.currency);
       renderEditCategoryGrid();
+      renderEditExpensePhotos();
 
       const titleEl = document.getElementById('modalEditExpenseTitle');
       const payerSec = document.getElementById('editPayerSection');
@@ -5644,6 +6009,8 @@
       const hasCardFee = document.getElementById('checkEditCardFee').checked;
       const finalAmount = hasCardFee ? Math.round(rawAmount * 1.015) : rawAmount;
 
+      const attachedPhotos = (editExpenseState.photos && editExpenseState.photos.length > 0) ? [...editExpenseState.photos] : [];
+
       if (exp.isPrivate) {
         exp.title = title;
         exp.category = editExpenseState.category;
@@ -5654,6 +6021,8 @@
         exp.hasCardFee = hasCardFee;
         exp.paidBy = state.myMemberId;
         exp.splitMembers = [state.myMemberId];
+        exp.photos = attachedPhotos;
+        exp.photoUrl = attachedPhotos[0] || '';
         exp.updatedAt = Date.now();
 
         // Update in privateExpenses array
@@ -5691,6 +6060,8 @@
       exp.hasCardFee = hasCardFee;
       exp.paidBy = editExpenseState.payer;
       exp.splitMembers = splitMembers;
+      exp.photos = attachedPhotos;
+      exp.photoUrl = attachedPhotos[0] || '';
       exp.updatedAt = Date.now();
 
       saveStateToStorage();
