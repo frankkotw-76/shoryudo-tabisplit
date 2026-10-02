@@ -5577,8 +5577,9 @@
 
       if (!state.itinerary) state.itinerary = [];
 
-      const itemId = idInput && idInput.value ? idInput.value : ('iti_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4));
       const existingIdx = state.itinerary.findIndex(x => x.id === itemId);
+      const existingItem = existingIdx !== -1 ? state.itinerary[existingIdx] : null;
+      const createdBy = existingItem && existingItem.createdBy ? existingItem.createdBy : (state.myMemberId || 'm1');
 
       const itemObj = {
         id: itemId,
@@ -5589,6 +5590,7 @@
         mapUrl: mapUrl,
         note: note,
         status: status,
+        createdBy: createdBy,
         updatedAt: Date.now()
       };
 
@@ -5713,6 +5715,10 @@
                 const emoji = getItineraryEmoji(item.title, item.note);
                 const isConfirmed = item.status === 'confirmed';
                 const hasMap = !!(item.mapUrl && item.mapUrl.trim());
+                const creatorId = item.createdBy || 'm1';
+                const creatorObj = state.members.find(m => m.id === creatorId) || state.members[0];
+                const creatorEmoji = creatorObj ? creatorObj.avatar : '🧑🏻‍💼';
+                const creatorName = creatorObj ? creatorObj.name : 'Frank';
 
                 return `
                   <div class="relative pl-8 group">
@@ -5733,7 +5739,7 @@
                         <div class="flex items-start gap-2 min-w-0">
                           <span class="text-base flex-shrink-0 mt-0.5">${emoji}</span>
                           <div class="min-w-0">
-                            <!-- Time & Status Badge -->
+                            <!-- Time & Status Badge & Creator -->
                             <div class="flex items-center gap-1.5 flex-wrap">
                               ${item.time ? `
                                 <span class="bg-stone-800 text-white font-black text-[10px] px-1.5 py-0.2 rounded-md">
@@ -5748,6 +5754,10 @@
                                 <span>${isConfirmed ? '✅' : '❓'}</span>
                                 <span>${isConfirmed ? '已確認' : '待定'}</span>
                               </button>
+                              <span class="text-[10px] text-stone-600 bg-stone-100/90 border border-stone-200/90 px-1.5 py-0.2 rounded-full font-medium flex items-center gap-0.5 shadow-2xs" title="行程建立者：${creatorName}">
+                                <span>${creatorEmoji}</span>
+                                <span>${creatorName}</span>
+                              </span>
                             </div>
 
                             <!-- Title -->
