@@ -384,6 +384,71 @@
       <div id="expenseItemsContainer" class="space-y-2.5"></div>
     </section>
 
+    <!-- ==================== TAB: 7天行程表 (7-DAY ITINERARY) ==================== -->
+    <section id="tab-itinerary" class="space-y-3.5 hidden">
+
+      <!-- Hero Header Card: 7-Day Quick Selector & Summary -->
+      <div class="bg-gradient-to-br from-stone-900 via-red-950 to-amber-950 text-white p-4 rounded-3xl shadow-md border border-amber-900/30 space-y-3">
+        <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🗺️</span>
+            <div>
+              <h3 class="font-black text-base text-amber-50">昇龍道賞楓 7日行程表 🍁</h3>
+              <p class="text-[10px] text-amber-200/80" id="itineraryHeaderDateRange">2026/10/15 (四) ～ 10/21 (三)・6人自由行</p>
+            </div>
+          </div>
+          <button onclick="openEditItineraryModal()" class="h-8 px-3 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs shadow-xs hover:from-red-700 hover:to-amber-700 active:scale-95 transition flex items-center gap-1 box-border">
+            <span>＋</span>
+            <span>加行程</span>
+          </button>
+        </div>
+
+        <!-- Day Selector (Pills) -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
+          <button type="button" onclick="setItineraryDayFilter(0)" id="btnItiDay-0" class="flex-shrink-0 px-3 py-1.5 rounded-xl font-bold transition box-border bg-white text-stone-900 shadow-xs">
+            🌟 全覽
+          </button>
+          <button type="button" onclick="setItineraryDayFilter(1)" id="btnItiDay-1" class="flex-shrink-0 px-3 py-1.5 rounded-xl font-bold transition box-border bg-white/10 text-white hover:bg-white/20">
+            D1 10/15 (四)
+          </button>
+          <button type="button" onclick="setItineraryDayFilter(2)" id="btnItiDay-2" class="flex-shrink-0 px-3 py-1.5 rounded-xl font-bold transition box-border bg-white/10 text-white hover:bg-white/20">
+            D2 10/16 (五)
+          </button>
+          <button type="button" onclick="setItineraryDayFilter(3)" id="btnItiDay-3" class="flex-shrink-0 px-3 py-1.5 rounded-xl font-bold transition box-border bg-white/10 text-white hover:bg-white/20">
+            D3 10/17 (六)
+          </button>
+          <button type="button" onclick="setItineraryDayFilter(4)" id="btnItiDay-4" class="flex-shrink-0 px-3 py-1.5 rounded-xl font-bold transition box-border bg-white/10 text-white hover:bg-white/20">
+            D4 10/18 (日)
+          </button>
+          <button type="button" onclick="setItineraryDayFilter(5)" id="btnItiDay-5" class="flex-shrink-0 px-3 py-1.5 rounded-xl font-bold transition box-border bg-white/10 text-white hover:bg-white/20">
+            D5 10/19 (一)
+          </button>
+          <button type="button" onclick="setItineraryDayFilter(6)" id="btnItiDay-6" class="flex-shrink-0 px-3 py-1.5 rounded-xl font-bold transition box-border bg-white/10 text-white hover:bg-white/20">
+            D6 10/20 (二)
+          </button>
+          <button type="button" onclick="setItineraryDayFilter(7)" id="btnItiDay-7" class="flex-shrink-0 px-3 py-1.5 rounded-xl font-bold transition box-border bg-white/10 text-white hover:bg-white/20">
+            D7 10/21 (三)
+          </button>
+        </div>
+
+        <!-- Day Stats & Status Banner -->
+        <div class="bg-black/30 rounded-2xl p-2.5 flex items-center justify-between text-xs border border-white/10">
+          <div class="flex items-center gap-2">
+            <span class="text-sm">📍</span>
+            <span id="itineraryDaySummaryText" class="font-bold text-amber-100">全部 7 天共 38 個景點與活動</span>
+          </div>
+          <div class="flex items-center gap-1.5" id="itineraryDayExpenseSummary">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Itinerary List Container -->
+      <div id="itineraryContainer" class="space-y-4">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </section>
+
     <!-- ==================== TAB 3: 支出深度分析 (EXPENSE ANALYTICS DASHBOARD) ==================== -->
     <section id="tab-stats" class="space-y-3.5 hidden">
 
@@ -1138,11 +1203,24 @@
         </button>
         <div id="changelogAccordion" class="hidden px-4 pb-4 pt-1 border-t border-stone-100 space-y-3 text-xs text-stone-600">
           
-          <!-- v2.3 -->
+          <!-- v2.4 -->
           <div class="space-y-1 border-l-2 border-red-700 pl-3">
             <div class="flex items-center gap-2">
-              <span class="font-black text-xs text-stone-800">v2.3 (最新版)</span>
+              <span class="font-black text-xs text-stone-800">v2.4 (最新版)</span>
               <span class="text-[9px] bg-red-100 text-red-800 font-bold px-1.5 py-0.2 rounded">Current</span>
+            </div>
+            <p class="text-[11px] text-stone-500 leading-relaxed">
+              • 🗺️ <strong>全新 7 天行程表（D1～D7 ＋ 全覽）</strong>：預填昇龍道 38 筆景點、住宿、交通與美食完整清單。<br>
+              • 📍 <strong>Google Maps 一鍵導航</strong>：景點/飯店/餐廳附帶短網址，點擊直接呼叫 Maps 導航。<br>
+              • ⏱️ <strong>時間／時段彈性支援</strong>：支援精確時刻（如 12:10）與概略時段（上午/中午/下午/傍晚/晚上/TBD）。<br>
+              • ✅ <strong>確認/待定一鍵切換</strong>：隨時標記行程確認狀態，並支援全員 6 人即時雙向雲端同步與自訂編輯。
+            </p>
+          </div>
+
+          <!-- v2.3 -->
+          <div class="space-y-1 border-l-2 border-stone-300 pl-3">
+            <div class="flex items-center gap-2">
+              <span class="font-black text-xs text-stone-800">v2.3</span>
             </div>
             <p class="text-[11px] text-stone-500 leading-relaxed">
               • 🔒 私帳刪除同步修正：導入端對端加密墓碑機制（Tombstone），確保跨裝置刪除私帳可即時同步，不再死灰復燃。<br>
@@ -1221,17 +1299,17 @@
         <span class="text-xl leading-none mb-0.5">📜</span>
         <span>明細</span>
       </button>
-      <button onclick="switchTab('stats')" id="nav-stats" class="flex flex-col items-center py-1 hover:text-red-700 transition">
-        <span class="text-xl leading-none mb-0.5">📊</span>
-        <span>分析</span>
+      <button onclick="switchTab('itinerary')" id="nav-itinerary" class="flex flex-col items-center py-1 hover:text-red-700 transition">
+        <span class="text-xl leading-none mb-0.5">🗺️</span>
+        <span>行程</span>
       </button>
       <button onclick="switchTab('kitty')" id="nav-kitty" class="flex flex-col items-center py-1 hover:text-amber-700 transition">
         <span class="text-xl leading-none mb-0.5">🪙</span>
         <span>公積金</span>
       </button>
-      <button onclick="switchTab('settle')" id="nav-settle" class="flex flex-col items-center py-1 hover:text-red-700 transition">
-        <span class="text-xl leading-none mb-0.5">⚖️</span>
-        <span>結算</span>
+      <button onclick="switchTab('stats')" id="nav-stats" class="flex flex-col items-center py-1 hover:text-red-700 transition">
+        <span class="text-xl leading-none mb-0.5">📊</span>
+        <span>分析</span>
       </button>
       <button onclick="switchTab('sync')" id="nav-sync" class="flex flex-col items-center py-1 hover:text-red-700 transition">
         <span class="text-xl leading-none mb-0.5">⛩️</span>
@@ -1596,6 +1674,96 @@
     </div>
   </div>
 
+  <!-- Modal: Add / Edit Itinerary Item -->
+  <div id="modalEditItinerary" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden backdrop-blur-xs">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 border border-amber-900/20 shadow-2xl animate-in fade-in zoom-in duration-200">
+      <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl" id="modalItineraryIcon">🗺️</span>
+          <h3 class="font-black text-base text-stone-800" id="modalItineraryTitle">新增行程項目</h3>
+        </div>
+        <button onclick="closeModal('modalEditItinerary')" class="text-stone-400 hover:text-stone-600 text-lg leading-none">✕</button>
+      </div>
+
+      <input type="hidden" id="editItineraryId" value="">
+
+      <!-- Day Selector (D1~D7) -->
+      <div>
+        <label class="text-xs font-bold text-stone-600 mb-1.5 block">選擇天數</label>
+        <select id="editItineraryDay" class="w-full h-11 px-3 text-xs font-bold rounded-xl bg-stone-50 border border-stone-200 text-stone-800 focus:outline-none focus:border-red-600 box-border">
+          <option value="1">D1 - 10/15 (四) 出發・小松・金澤</option>
+          <option value="2">D2 - 10/16 (五) 金澤城・兼六園・OUTLET</option>
+          <option value="3">D3 - 10/17 (六) 立山黑部・富山</option>
+          <option value="4">D4 - 10/18 (日) 白川鄉合掌村・飛驒高山</option>
+          <option value="5">D5 - 10/19 (一) 高山老街・郡上八幡・名古屋</option>
+          <option value="6">D6 - 10/20 (二) 名古屋自由探索</option>
+          <option value="7">D7 - 10/21 (三) 名古屋退房・返台</option>
+        </select>
+      </div>
+
+      <!-- Time & Quick Presets -->
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-xs font-bold text-stone-600">時間 / 時段</label>
+          <span class="text-[10px] text-stone-400">可輸入時間或點選預設</span>
+        </div>
+        <input type="text" id="editItineraryTime" placeholder="例如：09:00 或 上午" class="w-full h-11 px-3 text-xs font-bold rounded-xl bg-stone-50 border border-stone-200 text-stone-800 focus:outline-none focus:border-red-600 box-border">
+        
+        <!-- Quick Preset Pills -->
+        <div class="flex flex-wrap gap-1.5 mt-2">
+          <button type="button" onclick="setEditItiTimePreset('上午')" class="px-2 py-1 bg-stone-100 hover:bg-red-100 hover:text-red-800 rounded-lg text-[11px] font-semibold text-stone-600 transition">🌅 上午</button>
+          <button type="button" onclick="setEditItiTimePreset('中午')" class="px-2 py-1 bg-stone-100 hover:bg-red-100 hover:text-red-800 rounded-lg text-[11px] font-semibold text-stone-600 transition">☀️ 中午</button>
+          <button type="button" onclick="setEditItiTimePreset('下午')" class="px-2 py-1 bg-stone-100 hover:bg-red-100 hover:text-red-800 rounded-lg text-[11px] font-semibold text-stone-600 transition">☕ 下午</button>
+          <button type="button" onclick="setEditItiTimePreset('傍晚')" class="px-2 py-1 bg-stone-100 hover:bg-red-100 hover:text-red-800 rounded-lg text-[11px] font-semibold text-stone-600 transition">🌇 傍晚</button>
+          <button type="button" onclick="setEditItiTimePreset('晚上')" class="px-2 py-1 bg-stone-100 hover:bg-red-100 hover:text-red-800 rounded-lg text-[11px] font-semibold text-stone-600 transition">🌙 晚上</button>
+          <button type="button" onclick="setEditItiTimePreset('TBD')" class="px-2 py-1 bg-stone-100 hover:bg-amber-100 hover:text-amber-800 rounded-lg text-[11px] font-semibold text-stone-600 transition">❓ TBD</button>
+        </div>
+      </div>
+
+      <!-- Title / Location Name -->
+      <div>
+        <label class="text-xs font-bold text-stone-600 mb-1.5 block">地點 / 活動名稱 <span class="text-red-600">*</span></label>
+        <input type="text" id="editItineraryPlace" placeholder="例如：兼六園、白川鄉合掌村、味藏天國" class="w-full h-11 px-3 text-xs font-bold rounded-xl bg-stone-50 border border-stone-200 text-stone-800 focus:outline-none focus:border-red-600 box-border">
+      </div>
+
+      <!-- Google Maps URL -->
+      <div>
+        <label class="text-xs font-bold text-stone-600 mb-1.5 flex items-center justify-between">
+          <span class="flex items-center gap-1">🗺️ Google Maps 連結</span>
+          <span class="text-[10px] text-blue-600">點擊可直接開啟導航</span>
+        </label>
+        <input type="url" id="editItineraryMapUrl" placeholder="https://maps.app.goo.gl/..." class="w-full h-11 px-3 text-xs rounded-xl bg-stone-50 border border-stone-200 text-stone-800 focus:outline-none focus:border-red-600 box-border">
+      </div>
+
+      <!-- Note -->
+      <div>
+        <label class="text-xs font-bold text-stone-600 mb-1.5 block">備註說明</label>
+        <input type="text" id="editItineraryNote" placeholder="例如：需事先訂位、退房時間、門票每人 ¥500" class="w-full h-11 px-3 text-xs rounded-xl bg-stone-50 border border-stone-200 text-stone-800 focus:outline-none focus:border-red-600 box-border">
+      </div>
+
+      <!-- Status Toggle (Confirmed / Tentative) -->
+      <div>
+        <label class="text-xs font-bold text-stone-600 mb-1.5 block">行程確認狀態</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" id="btnItiStatusConfirmed" onclick="setEditItineraryStatus('confirmed')" class="h-10 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-600 bg-emerald-50 text-emerald-900 shadow-xs box-border">
+            <span>✅</span>
+            <span>已確認</span>
+          </button>
+          <button type="button" id="btnItiStatusTentative" onclick="setEditItineraryStatus('tentative')" class="h-10 rounded-xl text-xs font-medium transition flex items-center justify-center gap-1.5 border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 box-border">
+            <span>❓</span>
+            <span>待定 (TBD)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2 pt-1">
+        <button type="button" onclick="closeModal('modalEditItinerary')" class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-2.5 rounded-xl text-xs transition box-border h-11">取消</button>
+        <button type="button" onclick="saveItineraryItem()" class="flex-1 bg-gradient-to-r from-red-700 to-amber-700 text-white font-bold py-2.5 rounded-xl text-xs shadow transition box-border h-11">儲存行程</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 bg-stone-900/90 text-amber-50 text-xs font-medium px-4 py-2 rounded-full shadow-lg pointer-events-none transition-opacity duration-300 opacity-0 z-50 flex items-center gap-1.5 border border-amber-500/20">
     <span id="toastIcon">🍁</span>
@@ -1638,6 +1806,61 @@
       pollIntervalMs: 12000
     };
 
+    // 7-Day Itinerary Data (10/15 四 ～ 10/21 三)
+    const DEFAULT_ITINERARY = [
+      // D1 (10/15 四)
+      { id: 'iti_1', day: 1, date: '2026-10-15', time: '12:10', title: '虎航 IT252', mapUrl: 'https://maps.app.goo.gl/eBtomhcPDMKumTYB6', note: '航班起飛', status: 'confirmed' },
+      { id: 'iti_2', day: 1, date: '2026-10-15', time: '17:00', title: '豐田租車 小松機場店', mapUrl: 'https://maps.app.goo.gl/eoPXz1hpir6YH9fR6', note: '取車出發', status: 'confirmed' },
+      { id: 'iti_3', day: 1, date: '2026-10-15', time: '18:00', title: 'NARU kanazawa', mapUrl: 'https://maps.app.goo.gl/nrtmernYSm4MPSaZA', note: '金澤住宿 Check-in', status: 'confirmed' },
+      { id: 'iti_4', day: 1, date: '2026-10-15', time: '18:20', title: 'Valor 金澤元町店', mapUrl: 'https://maps.app.goo.gl/JfosgepQxyoctGxU7', note: '超市採買補給', status: 'tentative' },
+      { id: 'iti_5', day: 1, date: '2026-10-15', time: '19:30', title: 'さば料理専門店 SABAR＋ 金沢笠市店', mapUrl: 'https://maps.app.goo.gl/dEEGWhwHaDxLhj746', note: '晚餐 鯖魚料理', status: 'confirmed' },
+
+      // D2 (10/16 五)
+      { id: 'iti_6', day: 2, date: '2026-10-16', time: '上午', title: '東茶屋街', mapUrl: 'https://maps.app.goo.gl/xjqkQKgRon2huiqD9', note: '老街散策・金箔冰淇淋', status: 'tentative' },
+      { id: 'iti_7', day: 2, date: '2026-10-16', time: '上午', title: '金澤城', mapUrl: 'https://maps.app.goo.gl/9RFtWBMc1th92xn56', note: '歷史巡禮', status: 'tentative' },
+      { id: 'iti_8', day: 2, date: '2026-10-16', time: '上午', title: '兼六園', mapUrl: 'https://maps.app.goo.gl/Amgp9MnhZyVd8Cpx9', note: '日本三大名園賞楓', status: 'tentative' },
+      { id: 'iti_9', day: 2, date: '2026-10-16', time: '上午', title: '近江町市場', mapUrl: 'https://maps.app.goo.gl/9NMzHFz4ti8fxuKR6', note: '海鮮丼・新鮮水果', status: 'tentative' },
+      { id: 'iti_10', day: 2, date: '2026-10-16', time: '下午', title: '三井OUTLET PARK 北陸小矢部', mapUrl: 'https://maps.app.goo.gl/cpNgLNpUeUwAo4XX6', note: '購物採買', status: 'tentative' },
+      { id: 'iti_11', day: 2, date: '2026-10-16', time: '傍晚', title: '超市(albis Takayanagi)', mapUrl: 'https://maps.app.goo.gl/Vobmp1KpQJcLCc4r9', note: '食材採購', status: 'tentative' },
+      { id: 'iti_12', day: 2, date: '2026-10-16', time: '晚上', title: '晚餐自炊', mapUrl: '', note: '民宿廚房料理', status: 'tentative' },
+
+      // D3 (10/17 六)
+      { id: 'iti_13', day: 3, date: '2026-10-17', time: '08:10', title: '立山車站', mapUrl: 'https://maps.app.goo.gl/R3hpeZFwrFHWPGXP7', note: '立山黑部阿爾卑斯山脈路線', status: 'confirmed' },
+      { id: 'iti_14', day: 3, date: '2026-10-17', time: '下午', title: 'Montbell Village - Tateyama', mapUrl: 'https://maps.app.goo.gl/r9qgLXavfmr3sHjU9', note: '戶外裝備旗艦店', status: 'tentative' },
+      { id: 'iti_15', day: 3, date: '2026-10-17', time: '傍晚', title: '冰見回轉壽司 粹鮨 富山店', mapUrl: 'https://maps.app.goo.gl/vj4xW2Qvv6Q9kUEq5', note: '富山灣新鮮海味壽司', status: 'tentative' },
+      { id: 'iti_16', day: 3, date: '2026-10-17', time: '傍晚', title: '大和Roynet酒店富山站前', mapUrl: 'https://maps.app.goo.gl/eXVx3rbrgJy2756FA', note: '富山住宿 Check-in', status: 'confirmed' },
+      { id: 'iti_17', day: 3, date: '2026-10-17', time: '晚上', title: '富岩運河環水公園', mapUrl: 'https://maps.app.goo.gl/CHu1pVjPMjRWcbgd6', note: '世界最美星巴克夜景', status: 'tentative' },
+
+      // D4 (10/18 日)
+      { id: 'iti_18', day: 4, date: '2026-10-18', time: '上午', title: '白川鄉合掌村', mapUrl: 'https://maps.app.goo.gl/SkAxEK77KyWcdh3V6', note: '世界文化遺產・童話村落', status: 'confirmed' },
+      { id: 'iti_19', day: 4, date: '2026-10-18', time: '下午', title: '瀨戶川和白壁土藏街', mapUrl: 'https://maps.app.goo.gl/8qRLSK8DQYo1Br8R7', note: '飛驒古川・鯉魚溪流', status: 'tentative' },
+      { id: 'iti_20', day: 4, date: '2026-10-18', time: '下午', title: '飛驒之裡', mapUrl: 'https://maps.app.goo.gl/VnoRSw2PfchFnw4W8', note: '民俗合掌集落園區', status: 'tentative' },
+      { id: 'iti_21', day: 4, date: '2026-10-18', time: '16:00', title: '飛騨高山一の響 - Apartment', mapUrl: 'https://maps.app.goo.gl/yyXGG6G1tcWjFhGHA', note: '高山住宿 Check-in', status: 'confirmed' },
+      { id: 'iti_22', day: 4, date: '2026-10-18', time: '晚上', title: '味藏天國', mapUrl: 'https://maps.app.goo.gl/1w5HSJqgwTFbtX85A', note: '飛驒牛頂級燒肉晚餐', status: 'tentative' },
+
+      // D5 (10/19 一)
+      { id: 'iti_23', day: 5, date: '2026-10-19', time: '上午', title: '宮川朝市', mapUrl: 'https://maps.app.goo.gl/umTGtKrJETMxsbxa9', note: '三大朝市・手工小吃', status: 'tentative' },
+      { id: 'iti_24', day: 5, date: '2026-10-19', time: '上午', title: '高山老街', mapUrl: 'https://maps.app.goo.gl/xvQwD4qzfv3bKBos8', note: '三町老街・飛驒牛握壽司', status: 'tentative' },
+      { id: 'iti_25', day: 5, date: '2026-10-19', time: '中午', title: '郡上八幡小徑', mapUrl: 'https://maps.app.goo.gl/jzBH5DqoibAweaW8A', note: '水之名城・傳統石板路', status: 'tentative' },
+      { id: 'iti_26', day: 5, date: '2026-10-19', time: '中午', title: '蕎麦正まつい 郡上八幡店', mapUrl: 'https://maps.app.goo.gl/jRPEWWSYxVKDH4rH8', note: '午餐 名物蕎麥麵', status: 'tentative' },
+      { id: 'iti_27', day: 5, date: '2026-10-19', time: '下午', title: '犬山城', mapUrl: 'https://maps.app.goo.gl/5XnaXyaFUTJHPfjT7', note: '國寶天守閣・木曾川絕景', status: 'confirmed' },
+      { id: 'iti_28', day: 5, date: '2026-10-19', time: '16:00', title: '民宿(名古屋)', mapUrl: 'https://maps.app.goo.gl/kS1rNKjWAohaaQEA8', note: '名古屋住宿 Check-in', status: 'confirmed' },
+      { id: 'iti_29', day: 5, date: '2026-10-19', time: '17:00', title: '返還租車(名古屋新幹線口店)', mapUrl: 'https://maps.app.goo.gl/tWiZZTBnpNRAahGY7', note: '還車結清手續', status: 'confirmed' },
+      { id: 'iti_30', day: 5, date: '2026-10-19', time: '晚上', title: 'Yamatoya(日式烤雞串餐廳)', mapUrl: 'https://maps.app.goo.gl/s6CjJYAWceLKoMcj7', note: '名古屋名物烤雞串居酒屋', status: 'tentative' },
+
+      // D6 (10/20 二)
+      { id: 'iti_31', day: 6, date: '2026-10-20', time: '上午', title: '名古屋市區自由探索', mapUrl: '', note: 'TBD (熱田神宮 / 大須觀音)', status: 'tentative' },
+      { id: 'iti_32', day: 6, date: '2026-10-20', time: '中午', title: '名古屋美食巡禮', mapUrl: '', note: 'TBD (鰻魚飯三吃 / 矢場味噌豬排)', status: 'tentative' },
+      { id: 'iti_33', day: 6, date: '2026-10-20', time: '晚上', title: '綠洲21 / 名古屋電視塔夜景', mapUrl: '', note: 'TBD', status: 'tentative' },
+
+      // D7 (10/21 三)
+      { id: 'iti_34', day: 7, date: '2026-10-21', time: '10:00', title: '民宿退房', mapUrl: '', note: '行李寄放或攜帶', status: 'confirmed' },
+      { id: 'iti_35', day: 7, date: '2026-10-21', time: '中午', title: '榮町商圈最後採購', mapUrl: '', note: 'TBD (最後血拚伴手禮)', status: 'tentative' },
+      { id: 'iti_36', day: 7, date: '2026-10-21', time: '下午', title: '整理戰利品準備前往機場', mapUrl: '', note: 'TBD', status: 'tentative' },
+      { id: 'iti_37', day: 7, date: '2026-10-21', time: '16:48', title: '名鐵名古屋', mapUrl: 'https://maps.app.goo.gl/7VaLreSLDB9r3nGw5', note: '搭乘名鐵特急前往中部國際機場', status: 'confirmed' },
+      { id: 'iti_38', day: 7, date: '2026-10-21', time: '19:55', title: '星宇航空 JX839', mapUrl: 'https://maps.app.goo.gl/QFibKgkTXWHfX4re7', note: '起飛返台 ✈️ 滿載而歸', status: 'confirmed' }
+    ];
+
     let state = {
       tripTitle: "昇龍道賞楓遊 🍁",
       currentCurrency: 'JPY',
@@ -1647,6 +1870,9 @@
       expenses: [],
       deletedExpenseIds: [],
       deletedDepositIds: [],
+      itinerary: JSON.parse(JSON.stringify(DEFAULT_ITINERARY)),
+      deletedItineraryIds: [],
+      currentItineraryDay: 0, // 0 = 全覽, 1~7 = D1~D7
       currentCategory: 'food',
       currentPayer: 'm1',
       splitInclusions: { m1: true, m2: true, m3: true, m4: true, m5: true, m6: true },
@@ -1779,7 +2005,13 @@
           if (!Array.isArray(state.members) || state.members.length !== 6) {
             state.members = JSON.parse(JSON.stringify(DEFAULT_MEMBERS));
           }
+          if (!state.itinerary || !Array.isArray(state.itinerary) || state.itinerary.length === 0) {
+            state.itinerary = JSON.parse(JSON.stringify(DEFAULT_ITINERARY));
+          }
+          if (!state.deletedItineraryIds) state.deletedItineraryIds = [];
         } else {
+          state.itinerary = JSON.parse(JSON.stringify(DEFAULT_ITINERARY));
+          state.deletedItineraryIds = [];
           const prevKeys = ['tabisplit_shoryudo_v4_cloud', 'tabisplit_shoryudo_v3_multi_kitty'];
           for (const pk of prevKeys) {
             const old = localStorage.getItem(pk);
@@ -1804,7 +2036,7 @@
 
     function saveStateToStorage() {
       try {
-        // Only save communal public expenses to shared storage
+        // Only save communal public expenses and itinerary to shared storage
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
           tripTitle: state.tripTitle,
           exchangeRate: state.exchangeRate,
@@ -1813,6 +2045,8 @@
           expenses: (state.expenses || []).filter(e => !e.isPrivate),
           deletedExpenseIds: state.deletedExpenseIds || [],
           deletedDepositIds: state.deletedDepositIds || [],
+          itinerary: state.itinerary || [],
+          deletedItineraryIds: state.deletedItineraryIds || [],
           kittyKeeper: state.kittyKeeper,
           kittyDeposits: state.kittyDeposits,
           cloudRoomId: state.cloudRoomId
@@ -2683,11 +2917,46 @@
 
           const mergedDeposits = Array.from(depMap.values()).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
+          // 4. Merge Itinerary Items
+          const cloudDelIti = Array.isArray(cloudData.deletedItineraryIds) ? cloudData.deletedItineraryIds : [];
+          const localDelIti = Array.isArray(state.deletedItineraryIds) ? state.deletedItineraryIds : [];
+          const mergedDelIti = Array.from(new Set([...localDelIti, ...cloudDelIti]));
+          state.deletedItineraryIds = mergedDelIti;
+
+          const itiMap = new Map();
+          (state.itinerary || []).forEach(item => {
+            if (!mergedDelIti.includes(item.id)) {
+              itiMap.set(item.id, item);
+            }
+          });
+
+          const cloudItiList = Array.isArray(cloudData.itinerary) && cloudData.itinerary.length > 0 
+            ? cloudData.itinerary 
+            : (state.itinerary && state.itinerary.length > 0 ? state.itinerary : DEFAULT_ITINERARY);
+
+          cloudItiList.forEach(item => {
+            if (!mergedDelIti.includes(item.id)) {
+              if (!itiMap.has(item.id)) {
+                itiMap.set(item.id, item);
+              } else {
+                const local = itiMap.get(item.id);
+                const cloudTime = item.updatedAt || 0;
+                const localTime = local.updatedAt || 0;
+                if (cloudTime > localTime) {
+                  itiMap.set(item.id, item);
+                }
+              }
+            }
+          });
+
+          state.itinerary = Array.from(itiMap.values());
+
           let hasLocalChangesToPush = false;
           if (mergedExpenses.length > (cloudData.expenses || []).length ||
               mergedDeposits.length > (cloudData.kittyDeposits || []).length ||
               mergedDelExp.length > cloudDelExp.length ||
-              mergedDelDep.length > cloudDelDep.length) {
+              mergedDelDep.length > cloudDelDep.length ||
+              mergedDelIti.length > cloudDelIti.length) {
             hasLocalChangesToPush = true;
           }
 
@@ -2757,6 +3026,8 @@
           expenses: state.expenses.filter(e => !e.isPrivate),
           deletedExpenseIds: state.deletedExpenseIds || [],
           deletedDepositIds: state.deletedDepositIds || [],
+          itinerary: state.itinerary || [],
+          deletedItineraryIds: state.deletedItineraryIds || [],
           encryptedPrivateVaults: state.encryptedPrivateVaults || {},
           updatedAt: Date.now()
         };
@@ -2794,6 +3065,7 @@
       renderPayerGrid();
       renderSplitGrid();
       renderExpenseList();
+      renderItineraryTab();
       renderAnalyticsDashboard();
       renderKittyTab();
       renderSettlement();
@@ -2895,7 +3167,7 @@
     }
 
     function switchTab(tabName) {
-      const tabs = ['add', 'list', 'stats', 'kitty', 'settle', 'sync'];
+      const tabs = ['add', 'list', 'itinerary', 'stats', 'kitty', 'settle', 'sync'];
       tabs.forEach(t => {
         const section = document.getElementById(`tab-${t}`);
         const navBtn = document.getElementById(`nav-${t}`);
@@ -2913,6 +3185,9 @@
 
       if (tabName === 'list') {
         renderExpenseList();
+      }
+      if (tabName === 'itinerary') {
+        renderItineraryTab();
       }
       if (tabName === 'stats') {
         renderAnalyticsDashboard();
@@ -4785,6 +5060,375 @@
         showToast('已刪除支出', '🗑️');
         pushToCloud();
       }
+    }
+
+    // ==================== 7-DAY ITINERARY FUNCTIONS ====================
+
+    const ITI_DAYS_META = [
+      { day: 1, date: '2026-10-15', weekday: '四', title: '出發・小松・金澤', summary: '搭機・租車・金澤入住與晚餐' },
+      { day: 2, date: '2026-10-16', weekday: '五', title: '金澤城・兼六園・OUTLET', summary: '東茶屋街・三大名園・購物與自炊' },
+      { day: 3, date: '2026-10-17', weekday: '六', title: '立山黑部・富山', summary: '阿爾卑斯路線・壽司・富山夜景' },
+      { day: 4, date: '2026-10-18', weekday: '日', title: '白川鄉合掌村・飛驒高山', summary: '世界遺產・飛驒古川・高山飛驒牛' },
+      { day: 5, date: '2026-10-19', weekday: '一', title: '高山老街・郡上八幡・名古屋', summary: '朝市・犬山城・還車與居酒屋' },
+      { day: 6, date: '2026-10-20', weekday: '二', title: '名古屋自由探索', summary: '市區景點・美食購物・綠洲21夜景' },
+      { day: 7, date: '2026-10-21', weekday: '三', title: '名古屋退房・返台', summary: '最後採買・名鐵特急・星宇返台' }
+    ];
+
+    function getItineraryEmoji(title, note) {
+      const text = `${title} ${note}`.toLowerCase();
+      if (/航空|航班|機|飛行|飛機|jx|it252|星宇|虎航/.test(text)) return '✈️';
+      if (/租車|取車|還車|豐田|toyota|自駕|停車/.test(text)) return '🚗';
+      if (/名鐵|電車|新幹線|地鐵|巴士|車站|火車|特急|乘車/.test(text)) return '🚊';
+      if (/酒店|hotel|民宿|apartment|住宿|check-in|退房|入住|背包客/.test(text)) return '🏨';
+      if (/燒肉|味藏|牛|壽司|生魚片|海鮮|市場|近江町|拉麵|蕎麥|居酒屋|烤雞|豬排|鰻魚|晚餐|午餐|早餐|朝市|料理|自炊|餐廳|sabar|yamatoya/.test(text)) return '🍜';
+      if (/超市|outlet|買|購物|商圈|伴手禮|valor|albis|三井|榮町|montbell/.test(text)) return '🛍️';
+      if (/兼六園|金澤城|茶屋|白川|合掌|犬山城|公園|星巴克|老街|瀨戶川|高山|飛驒|立山|神宮|觀音|電視塔|綠洲21/.test(text)) return '🏯';
+      if (/溫泉|湯/.test(text)) return '♨️';
+      return '📍';
+    }
+
+    function setItineraryDayFilter(dayNum) {
+      state.currentItineraryDay = dayNum;
+      
+      // Update Pills UI
+      for (let d = 0; d <= 7; d++) {
+        const btn = document.getElementById(`btnItiDay-${d}`);
+        if (!btn) continue;
+        if (d === dayNum) {
+          btn.className = "flex-shrink-0 px-3 py-1.5 rounded-xl font-bold transition box-border bg-white text-stone-900 shadow-xs ring-2 ring-amber-400";
+        } else {
+          btn.className = "flex-shrink-0 px-3 py-1.5 rounded-xl font-bold transition box-border bg-white/10 text-white hover:bg-white/20";
+        }
+      }
+
+      renderItineraryTab();
+    }
+
+    async function toggleItineraryStatus(id) {
+      const item = (state.itinerary || []).find(x => x.id === id);
+      if (!item) return;
+      item.status = item.status === 'confirmed' ? 'tentative' : 'confirmed';
+      item.updatedAt = Date.now();
+
+      saveStateToStorage();
+      renderItineraryTab();
+      showToast(item.status === 'confirmed' ? `已將「${item.title}」設為確認 ✅` : `已將「${item.title}」設為待定 ❓`, '🗺️');
+      await pushToCloud(false);
+    }
+
+    let editItineraryState = {
+      id: null,
+      day: 1,
+      status: 'confirmed'
+    };
+
+    function openEditItineraryModal(id = null, defaultDay = null) {
+      editItineraryState.id = id;
+      const titleEl = document.getElementById('modalItineraryTitle');
+      const iconEl = document.getElementById('modalItineraryIcon');
+      const daySelect = document.getElementById('editItineraryDay');
+      const timeInput = document.getElementById('editItineraryTime');
+      const placeInput = document.getElementById('editItineraryPlace');
+      const mapUrlInput = document.getElementById('editItineraryMapUrl');
+      const noteInput = document.getElementById('editItineraryNote');
+      const idInput = document.getElementById('editItineraryId');
+
+      if (id) {
+        const item = (state.itinerary || []).find(x => x.id === id);
+        if (!item) return;
+        if (titleEl) titleEl.textContent = '修改行程項目';
+        if (iconEl) iconEl.textContent = '✏️';
+        if (idInput) idInput.value = item.id;
+        if (daySelect) daySelect.value = String(item.day || 1);
+        if (timeInput) timeInput.value = item.time || '';
+        if (placeInput) placeInput.value = item.title || '';
+        if (mapUrlInput) mapUrlInput.value = item.mapUrl || '';
+        if (noteInput) noteInput.value = item.note || '';
+        setEditItineraryStatus(item.status || 'confirmed');
+      } else {
+        if (titleEl) titleEl.textContent = '新增行程項目';
+        if (iconEl) iconEl.textContent = '🗺️';
+        if (idInput) idInput.value = '';
+        const targetDay = defaultDay || (state.currentItineraryDay > 0 ? state.currentItineraryDay : 1);
+        if (daySelect) daySelect.value = String(targetDay);
+        if (timeInput) timeInput.value = '';
+        if (placeInput) placeInput.value = '';
+        if (mapUrlInput) mapUrlInput.value = '';
+        if (noteInput) noteInput.value = '';
+        setEditItineraryStatus('confirmed');
+      }
+
+      openModal('modalEditItinerary');
+    }
+
+    function setEditItiTimePreset(preset) {
+      const timeInput = document.getElementById('editItineraryTime');
+      if (timeInput) {
+        timeInput.value = preset;
+        timeInput.focus();
+      }
+    }
+
+    function setEditItineraryStatus(status) {
+      editItineraryState.status = status;
+      const btnConf = document.getElementById('btnItiStatusConfirmed');
+      const btnTent = document.getElementById('btnItiStatusTentative');
+      if (status === 'confirmed') {
+        if (btnConf) btnConf.className = "h-10 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border border-emerald-600 bg-emerald-50 text-emerald-900 shadow-xs box-border";
+        if (btnTent) btnTent.className = "h-10 rounded-xl text-xs font-medium transition flex items-center justify-center gap-1.5 border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 box-border";
+      } else {
+        if (btnTent) btnTent.className = "h-10 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border border-amber-600 bg-amber-50 text-amber-900 shadow-xs box-border";
+        if (btnConf) btnConf.className = "h-10 rounded-xl text-xs font-medium transition flex items-center justify-center gap-1.5 border border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100 box-border";
+      }
+    }
+
+    async function saveItineraryItem() {
+      const idInput = document.getElementById('editItineraryId');
+      const daySelect = document.getElementById('editItineraryDay');
+      const timeInput = document.getElementById('editItineraryTime');
+      const placeInput = document.getElementById('editItineraryPlace');
+      const mapUrlInput = document.getElementById('editItineraryMapUrl');
+      const noteInput = document.getElementById('editItineraryNote');
+
+      const title = placeInput ? placeInput.value.trim() : '';
+      if (!title) {
+        showToast('請輸入地點或活動名稱！', '⚠️');
+        if (placeInput) placeInput.focus();
+        return;
+      }
+
+      const dayNum = parseInt(daySelect ? daySelect.value : '1') || 1;
+      const dayMeta = ITI_DAYS_META.find(d => d.day === dayNum) || ITI_DAYS_META[0];
+      const timeStr = timeInput ? timeInput.value.trim() : '';
+      const mapUrl = mapUrlInput ? mapUrlInput.value.trim() : '';
+      const note = noteInput ? noteInput.value.trim() : '';
+      const status = editItineraryState.status || 'confirmed';
+
+      if (!state.itinerary) state.itinerary = [];
+
+      const itemId = idInput && idInput.value ? idInput.value : ('iti_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4));
+      const existingIdx = state.itinerary.findIndex(x => x.id === itemId);
+
+      const itemObj = {
+        id: itemId,
+        day: dayNum,
+        date: dayMeta.date,
+        time: timeStr,
+        title: title,
+        mapUrl: mapUrl,
+        note: note,
+        status: status,
+        updatedAt: Date.now()
+      };
+
+      if (existingIdx !== -1) {
+        state.itinerary[existingIdx] = itemObj;
+        showToast(`已更新行程：${title}`, '✏️');
+      } else {
+        state.itinerary.push(itemObj);
+        showToast(`已新增行程：${title}`, '🗺️');
+      }
+
+      closeModal('modalEditItinerary');
+      saveStateToStorage();
+      renderItineraryTab();
+      await pushToCloud(false);
+    }
+
+    async function deleteItineraryItem(id) {
+      const item = (state.itinerary || []).find(x => x.id === id);
+      if (!item) return;
+
+      if (confirm(`確定要刪除行程「${item.title}」嗎？`)) {
+        if (!state.deletedItineraryIds) state.deletedItineraryIds = [];
+        if (!state.deletedItineraryIds.includes(id)) {
+          state.deletedItineraryIds.push(id);
+        }
+
+        state.itinerary = (state.itinerary || []).filter(x => x.id !== id);
+        saveStateToStorage();
+        renderItineraryTab();
+        showToast(`已刪除行程：${item.title}`, '🗑️');
+        await pushToCloud(false);
+      }
+    }
+
+    function renderItineraryTab() {
+      const container = document.getElementById('itineraryContainer');
+      const summaryTextEl = document.getElementById('itineraryDaySummaryText');
+      const expenseSummaryEl = document.getElementById('itineraryDayExpenseSummary');
+      if (!container) return;
+
+      const currentDay = state.currentItineraryDay || 0;
+      const allIti = (state.itinerary || []).filter(x => !(state.deletedItineraryIds || []).includes(x.id));
+
+      // Calculate Expenses Per Day
+      const expensesByDate = {};
+      (state.expenses || []).filter(e => !e.isPrivate).forEach(e => {
+        const dStr = e.date || '';
+        if (!expensesByDate[dStr]) expensesByDate[dStr] = 0;
+        const twd = e.currency === 'JPY' ? Math.round(e.amount * e.exchangeRate) : e.amount;
+        expensesByDate[dStr] += twd;
+      });
+
+      // Update Summary Banner
+      if (currentDay === 0) {
+        if (summaryTextEl) summaryTextEl.textContent = `全部 7 天共 ${allIti.length} 個景點與活動`;
+        if (expenseSummaryEl) {
+          const totalTwd = Object.values(expensesByDate).reduce((a, b) => a + b, 0);
+          expenseSummaryEl.innerHTML = `<span class="bg-amber-400/20 text-amber-200 px-2 py-0.5 rounded-md font-bold text-[11px]">公費總計 NT$ ${totalTwd.toLocaleString()}</span>`;
+        }
+      } else {
+        const dMeta = ITI_DAYS_META.find(d => d.day === currentDay) || ITI_DAYS_META[0];
+        const dayItems = allIti.filter(x => x.day === currentDay);
+        const dayExpense = expensesByDate[dMeta.date] || 0;
+        if (summaryTextEl) summaryTextEl.textContent = `D${currentDay} ${dMeta.title} (${dayItems.length} 項目)`;
+        if (expenseSummaryEl) {
+          expenseSummaryEl.innerHTML = dayExpense > 0 
+            ? `<span class="bg-emerald-400/20 text-emerald-200 px-2 py-0.5 rounded-md font-bold text-[11px]">當日公費 NT$ ${dayExpense.toLocaleString()}</span>`
+            : `<span class="text-stone-400 text-[10px]">尚無公費支出</span>`;
+        }
+      }
+
+      // Filter Days to render
+      const daysToRender = currentDay === 0 ? ITI_DAYS_META : ITI_DAYS_META.filter(d => d.day === currentDay);
+
+      if (allIti.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white/95 rounded-3xl p-8 text-center text-stone-400 space-y-3 border border-stone-200/90 shadow-sm">
+            <span class="text-4xl">🗺️</span>
+            <p class="text-sm font-bold text-stone-700">目前尚無行程安排</p>
+            <p class="text-xs text-stone-500">點擊上方「＋ 加行程」開始規劃您的昇龍道之旅！</p>
+            <button onclick="openEditItineraryModal()" class="h-10 px-4 rounded-xl bg-red-700 text-white font-bold text-xs shadow-sm hover:bg-red-800 transition">
+              ＋ 建立第一筆行程
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = daysToRender.map(dMeta => {
+        const dayItems = allIti.filter(x => x.day === dMeta.day);
+        const dayExpense = expensesByDate[dMeta.date] || 0;
+
+        return `
+          <!-- Day Section: D${dMeta.day} -->
+          <div class="bg-white/95 rounded-3xl p-4 shadow-sm border border-stone-200/90 space-y-3">
+            
+            <!-- Day Header Card -->
+            <div class="flex items-center justify-between border-b border-stone-100 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-red-700 to-amber-700 text-white font-black text-xs flex items-center justify-center shadow-xs">
+                  D${dMeta.day}
+                </span>
+                <div>
+                  <h4 class="font-extrabold text-sm text-stone-900">${dMeta.date.substring(5).replace('-', '/')} (${dMeta.weekday})・${dMeta.title}</h4>
+                  <p class="text-[10px] text-stone-400">${dMeta.summary}</p>
+                </div>
+              </div>
+              <button type="button" onclick="openEditItineraryModal(null, ${dMeta.day})" class="text-xs font-bold text-red-700 hover:text-red-900 flex items-center gap-0.5 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-lg transition" title="在此天新增項目">
+                <span>＋</span>
+                <span>加行程</span>
+              </button>
+            </div>
+
+            <!-- Timeline Items -->
+            <div class="space-y-2.5 relative before:absolute before:left-3.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-stone-200">
+              ${dayItems.length === 0 ? `
+                <div class="py-4 text-center text-xs text-stone-400 bg-stone-50/60 rounded-2xl border border-dashed border-stone-200">
+                  此天尚無排定行程，點擊「＋ 加行程」安排景點或住宿！
+                </div>
+              ` : dayItems.map((item, idx) => {
+                const emoji = getItineraryEmoji(item.title, item.note);
+                const isConfirmed = item.status === 'confirmed';
+                const hasMap = !!(item.mapUrl && item.mapUrl.trim());
+
+                return `
+                  <div class="relative pl-8 group">
+                    <!-- Timeline Dot -->
+                    <div class="absolute left-1.5 top-3 w-4 h-4 rounded-full border-2 bg-white flex items-center justify-center transition ${
+                      isConfirmed ? 'border-emerald-600 ring-2 ring-emerald-100' : 'border-amber-500 ring-2 ring-amber-100'
+                    }">
+                      <div class="w-1.5 h-1.5 rounded-full ${isConfirmed ? 'bg-emerald-600' : 'bg-amber-500'}"></div>
+                    </div>
+
+                    <!-- Item Box -->
+                    <div class="p-3 rounded-2xl border transition shadow-2xs ${
+                      isConfirmed 
+                        ? 'bg-stone-50/80 border-stone-200 hover:border-amber-300' 
+                        : 'bg-amber-50/40 border-amber-200/80 hover:border-amber-400'
+                    }">
+                      <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-start gap-2 min-w-0">
+                          <span class="text-base flex-shrink-0 mt-0.5">${emoji}</span>
+                          <div class="min-w-0">
+                            <!-- Time & Status Badge -->
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                              ${item.time ? `
+                                <span class="bg-stone-800 text-white font-black text-[10px] px-1.5 py-0.2 rounded-md">
+                                  ${item.time}
+                                </span>
+                              ` : ''}
+                              <button type="button" onclick="toggleItineraryStatus('${item.id}')" class="text-[10px] font-bold px-1.5 py-0.2 rounded-full border transition flex items-center gap-0.5 ${
+                                isConfirmed 
+                                  ? 'bg-emerald-100 text-emerald-900 border-emerald-300 hover:bg-emerald-200' 
+                                  : 'bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200'
+                              }">
+                                <span>${isConfirmed ? '✅' : '❓'}</span>
+                                <span>${isConfirmed ? '已確認' : '待定'}</span>
+                              </button>
+                            </div>
+
+                            <!-- Title -->
+                            <h5 class="font-bold text-xs text-stone-900 mt-1 leading-snug break-words">
+                              ${item.title}
+                            </h5>
+
+                            <!-- Note -->
+                            ${item.note ? `
+                              <p class="text-[11px] text-stone-500 mt-0.5 leading-relaxed">
+                                💬 ${item.note}
+                              </p>
+                            ` : ''}
+                          </div>
+                        </div>
+
+                        <!-- Right Actions -->
+                        <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
+                          <!-- Google Maps Nav Button -->
+                          ${hasMap ? `
+                            <a href="${item.mapUrl}" target="_blank" rel="noopener noreferrer" class="h-7 px-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[10px] font-bold shadow-2xs flex items-center gap-1 transition active:scale-95">
+                              <span>🗺️</span>
+                              <span>導航</span>
+                            </a>
+                          ` : ''}
+                          
+                          <div class="flex items-center gap-1">
+                            <button type="button" onclick="openEditItineraryModal('${item.id}')" class="text-stone-400 hover:text-stone-700 p-1 text-xs" title="編輯">
+                              ✏️
+                            </button>
+                            <button type="button" onclick="deleteItineraryItem('${item.id}')" class="text-stone-300 hover:text-red-600 p-1 text-xs" title="刪除">
+                              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- Day Expense Footer Summary -->
+            <div class="pt-2 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500 px-1">
+              <span>📅 當日公費花費小計</span>
+              <span class="font-bold ${dayExpense > 0 ? 'text-stone-900' : 'text-stone-400'}">
+                ${dayExpense > 0 ? `NT$ ${dayExpense.toLocaleString()}` : 'NT$ 0'}
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     // ==================== EDIT EXPENSE MODAL LOGIC ====================
