@@ -1330,7 +1330,7 @@
   </main>
 
   <!-- Bottom Navigation Bar -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-stone-200/90 z-40 pb-safe">
+  <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-stone-200/90 pb-safe shadow-lg" style="z-index: 100000;">
     <div class="max-w-md mx-auto grid grid-cols-6 text-center text-[10px] font-bold text-stone-500 py-1.5">
       <button onclick="switchTab('add')" id="nav-add" class="flex flex-col items-center py-1 text-red-700 transition">
         <span class="text-xl leading-none mb-0.5">🍁</span>
@@ -1834,7 +1834,7 @@
   </div>
 
   <!-- Modal: Photo Lightbox (全螢幕帳單照片檢視器) -->
-  <div id="modalPhotoLightbox" class="fixed inset-0 bg-black/95 hidden select-none overflow-hidden" style="z-index: 99999; width: 100vw; height: 100vh; height: 100dvh;">
+  <div id="modalPhotoLightbox" class="fixed inset-x-0 top-0 hidden select-none overflow-hidden bg-black/95 shadow-2xl" style="z-index: 99990; bottom: calc(env(safe-area-inset-bottom, 0px) + 54px);">
     <!-- Top Bar (Fixed at top with iOS safe area) -->
     <div class="absolute left-3 right-3 z-30 flex items-center justify-between text-white bg-stone-950/90 backdrop-blur-md px-3.5 py-2.5 rounded-2xl border border-white/15 shadow-2xl" style="top: max(env(safe-area-inset-top, 0px), 14px);">
       <div class="flex items-center gap-2">
@@ -1860,19 +1860,14 @@
       <span class="text-2xl font-black text-white leading-none" style="text-shadow: 0 1px 3px rgba(0,0,0,0.5);">✕</span>
     </button>
 
-    <!-- Center Image Area (Constrained between top bar and bottom bar) -->
-    <div class="absolute inset-0 z-10 flex items-center justify-center p-4 overflow-hidden" onclick="if(event.target === this) closePhotoLightbox()" style="top: 70px; bottom: 85px;">
+    <!-- Center Image Area (Constrained between top bar and bottom thumbnails) -->
+    <div class="absolute inset-0 z-10 flex items-center justify-center p-3 overflow-hidden" onclick="if(event.target === this) closePhotoLightbox()" style="top: 68px; bottom: 54px;">
       <img id="lightboxImg" src="" alt="Receipt Photo" class="max-h-full max-w-full object-contain rounded-xl shadow-2xl transition-transform duration-200 cursor-zoom-in" onclick="if(event.target === this) event.stopPropagation();">
     </div>
 
-    <!-- Bottom Bar (Fixed at bottom with iOS safe area) -->
-    <div class="absolute left-3 right-3 z-30 flex flex-col items-center gap-2" style="bottom: max(env(safe-area-inset-bottom, 0px), 14px);">
-      <!-- Thumbnail Strip -->
+    <!-- Bottom Thumbnail Strip (Fixed above nav bar) -->
+    <div class="absolute left-3 right-3 bottom-2 z-30 flex items-center justify-center">
       <div id="lightboxThumbStrip" class="flex items-center justify-center gap-2 overflow-x-auto min-h-[44px] max-w-full"></div>
-      <!-- Bottom Close Button Bar -->
-      <button type="button" onclick="closePhotoLightbox()" class="w-full max-w-xs py-2.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-white text-xs font-black rounded-full border-2 border-white backdrop-blur-md flex items-center justify-center gap-1.5 transition active:scale-98 shadow-xl cursor-pointer">
-        <span class="text-sm font-black text-white" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">✕</span><span class="text-white font-black" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">點此關閉檢視</span>
-      </button>
     </div>
   </div>
 
@@ -3304,6 +3299,7 @@
     }
 
     function switchTab(tabName) {
+      closePhotoLightbox();
       const tabs = ['add', 'list', 'itinerary', 'stats', 'kitty', 'settle', 'sync'];
       tabs.forEach(t => {
         const section = document.getElementById(`tab-${t}`);
