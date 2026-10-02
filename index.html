@@ -1917,6 +1917,22 @@
       return `${y}-${m}-${d}`;
     }
 
+    // Auto-select the itinerary day based on today's date
+    function getAutoItineraryDay() {
+      const today = getTodayDateStr();
+      const tripDates = [
+        '2026-10-15', // D1
+        '2026-10-16', // D2
+        '2026-10-17', // D3
+        '2026-10-18', // D4
+        '2026-10-19', // D5
+        '2026-10-20', // D6
+        '2026-10-21', // D7
+      ];
+      const idx = tripDates.indexOf(today);
+      return idx === -1 ? 0 : idx + 1; // 0 = 全覽, 1~7 = D1~D7
+    }
+
     function initDateInputs() {
       const today = getTodayDateStr();
       const ids = ['inputExpenseDate', 'inputDepositDate', 'inputSpendExpenseDate'];
@@ -1929,6 +1945,8 @@
     window.addEventListener('DOMContentLoaded', () => {
       loadStateFromStorage();
       initDateInputs();
+      // Auto-select today's itinerary day on every fresh page load
+      state.currentItineraryDay = getAutoItineraryDay();
       checkUrlHashForData();
       renderAll();
       setupEventListeners();
