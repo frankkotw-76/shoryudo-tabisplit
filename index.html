@@ -5458,6 +5458,35 @@
       return '📍';
     }
 
+    // Convert time strings (like "12:10", "上午", "中午", "下午", "晚上", "TBD") into chronological sort score
+    function parseItineraryTimeScore(timeStr) {
+      if (!timeStr || typeof timeStr !== 'string') return 9999;
+      const t = timeStr.trim();
+      if (!t) return 9999;
+
+      // Exact time matching: HH:MM or H:MM
+      const matchTime = t.match(/^(\d{1,2}):(\d{2})$/);
+      if (matchTime) {
+        const hours = parseInt(matchTime[1], 10);
+        const mins = parseInt(matchTime[2], 10);
+        return hours * 60 + mins;
+      }
+
+      // Presets & fuzzy matching
+      if (/清晨|早晨/.test(t)) return 6 * 60;              // 06:00 (360)
+      if (/早上/.test(t)) return 7 * 60 + 30;             // 07:30 (450)
+      if (/上午/.test(t)) return 9 * 60 + 30;             // 09:30 (570)
+      if (/中午|午間/.test(t)) return 12 * 60;             // 12:00 (720)
+      if (/下午/.test(t)) return 14 * 60 + 30;            // 14:30 (870)
+      if (/傍晚|黃昏/.test(t)) return 17 * 60 + 30;        // 17:30 (1050)
+      if (/晚上|夜間/.test(t)) return 19 * 60 + 30;        // 19:30 (1170)
+      if (/宵夜|深夜/.test(t)) return 22 * 60;            // 22:00 (1320)
+      if (/全天/.test(t)) return 5 * 60;                 // 05:00 (300)
+      if (/tbd|待定|彈性/i.test(t)) return 9998;
+
+      return 9999;
+    }
+
     function setItineraryDayFilter(dayNum) {
       state.currentItineraryDay = dayNum;
       
@@ -5682,7 +5711,14 @@
       }
 
       container.innerHTML = daysToRender.map(dMeta => {
-        const dayItems = allIti.filter(x => x.day === dMeta.day);
+        const dayItems = allIti
+          .filter(x => x.day === dMeta.day)
+          .sort((a, b) => {
+            const scoreA = parseItineraryTimeScore(a.time);
+            const scoreB = parseItineraryTimeScore(b.time);
+            if (scoreA !== scoreB) return scoreA - scoreB;
+            return (a.updatedAt || 0) - (b.updatedAt || 0);
+          });
         const dayExpense = expensesByDate[dMeta.date] || 0;
 
         return `
