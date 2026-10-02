@@ -4974,7 +4974,15 @@
         return;
       }
 
-      listContainer.innerHTML = filtered.map(exp => {
+      // Sort by date descending (newest first), then by createdAt descending
+      const sortedFiltered = [...filtered].sort((a, b) => {
+        const dateA = a.date || (a.createdAt ? new Date(a.createdAt).toISOString().split('T')[0] : '');
+        const dateB = b.date || (b.createdAt ? new Date(b.createdAt).toISOString().split('T')[0] : '');
+        if (dateB !== dateA) return dateB.localeCompare(dateA);
+        return (b.createdAt || 0) - (a.createdAt || 0);
+      });
+
+      listContainer.innerHTML = sortedFiltered.map(exp => {
         const catNorm = normalizeCategory(exp.category);
         const cat = CATEGORIES.find(c => c.id === catNorm) || CATEGORIES[0];
         const payerObj = state.members.find(m => m.id === exp.paidBy);
@@ -6123,7 +6131,8 @@
         exportPrivateCsvReport();
         return;
       }
-      const allExpenses = (state.expenses || []);
+      // Public expenses only — exclude private vault entries
+      const allExpenses = (state.expenses || []).filter(e => !e.isPrivate);
       if (allExpenses.length === 0) {
         showToast('目前沒有可匯出的支出明細紀錄', '⚠️');
         return;
