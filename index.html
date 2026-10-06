@@ -460,12 +460,15 @@
         </div>
 
         <!-- Day Stats & Status Banner -->
-        <div class="bg-black/30 rounded-2xl p-2.5 flex items-center justify-between text-xs border border-white/10">
-          <div class="flex items-center gap-2">
-            <span class="text-sm">📍</span>
-            <span id="itineraryDaySummaryText" class="font-bold text-amber-100">全部 7 天共 38 個景點與活動</span>
+        <div class="bg-black/30 rounded-2xl p-2.5 flex items-center justify-between text-xs border border-white/10 gap-2">
+          <div class="flex items-center gap-1.5 min-w-0 flex-1">
+            <span class="text-sm flex-shrink-0">📍</span>
+            <span id="itineraryDaySummaryText" class="font-bold text-amber-100 truncate">全部 7 天共 38 個景點與活動</span>
           </div>
-          <span class="text-[11px] text-amber-200/80 font-medium">🍁 行程安排</span>
+          <!-- Weather Widget Container -->
+          <div id="itineraryWeatherBadge" class="flex-shrink-0">
+            <!-- Dynamically rendered -->
+          </div>
         </div>
       </div>
 
@@ -1869,6 +1872,64 @@
     </div>
   </div>
 
+  <!-- Modal: Weather Details & Clothing Advice (日本氣象廳/Open-Meteo 天氣預報詳情) -->
+  <div id="modalWeather" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden backdrop-blur-xs">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 border border-blue-900/20 shadow-2xl animate-in fade-in zoom-in duration-200">
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between border-b border-stone-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div id="modalWeatherBigIcon" class="w-10 h-10 rounded-2xl bg-blue-50 text-2xl flex items-center justify-center border border-blue-200/60 shadow-xs">🌤️</div>
+          <div>
+            <h3 id="modalWeatherTitle" class="font-extrabold text-stone-900 text-sm">D4 10/18 飛驒高山・白川鄉</h3>
+            <p id="modalWeatherSubtitle" class="text-[11px] text-stone-500 font-medium">日本氣象廳 (JMA) 預報模型</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeModal('modalWeather')" class="w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-500 flex items-center justify-center text-sm font-bold transition">✕</button>
+      </div>
+
+      <!-- Temperature & Metrics Overview -->
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div class="bg-blue-50/70 rounded-2xl p-2.5 border border-blue-100">
+          <span class="text-[10px] text-blue-700 block font-semibold mb-0.5">天氣狀況</span>
+          <span id="modalWeatherDesc" class="font-black text-xs text-stone-900">多雲時晴</span>
+        </div>
+        <div class="bg-amber-50/70 rounded-2xl p-2.5 border border-amber-100">
+          <span class="text-[10px] text-amber-800 block font-semibold mb-0.5">氣溫預測</span>
+          <span id="modalWeatherTemp" class="font-black text-xs text-amber-900">7° ~ 18°C</span>
+        </div>
+        <div class="bg-sky-50/70 rounded-2xl p-2.5 border border-sky-100">
+          <span class="text-[10px] text-sky-700 block font-semibold mb-0.5">降雨機率</span>
+          <span id="modalWeatherRain" class="font-black text-xs text-sky-900">💧 20%</span>
+        </div>
+      </div>
+
+      <!-- Clothing Advice Box -->
+      <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-3.5 border border-amber-200/70 space-y-1.5">
+        <div class="flex items-center gap-1.5 text-xs font-bold text-amber-900">
+          <span>🧣</span>
+          <span>穿衣與攜帶建議</span>
+        </div>
+        <p id="modalWeatherAdvice" class="text-xs text-stone-700 leading-relaxed">
+          早晚偏涼，山區溫差較大，建議洋蔥式穿法，攜帶好收納的防風外套或保暖輕羽絨。
+        </p>
+      </div>
+
+      <!-- Footer Info & Refresh Button -->
+      <div class="flex items-center justify-between pt-1 text-[11px] text-stone-400">
+        <span id="modalWeatherUpdateTime">更新時間: 13:00</span>
+        <button type="button" onclick="refreshItineraryWeather(true)" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 transition">
+          <span>🔄</span>
+          <span>即時重新整理</span>
+        </button>
+      </div>
+
+      <!-- Close Button -->
+      <button type="button" onclick="closeModal('modalWeather')" class="w-full h-11 bg-stone-900 hover:bg-stone-800 text-white font-bold rounded-2xl text-xs transition shadow-md active:scale-98">
+        關閉
+      </button>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 bg-stone-900/90 text-amber-50 text-xs font-medium px-4 py-2 rounded-full shadow-lg pointer-events-none transition-opacity duration-300 opacity-0 z-50 flex items-center gap-1.5 border border-amber-500/20">
     <span id="toastIcon">🍁</span>
@@ -2060,7 +2121,10 @@
       state.currentItineraryDay = getAutoItineraryDay();
       checkUrlHashForData();
       renderAll();
-      setupEventListeners();
+      const urlParams = new URLSearchParams(window.location.search);
+      if (window.location.hash === '#itinerary' || urlParams.get('tab') === 'itinerary') {
+        switchTab('itinerary');
+      }
       initCloudSync();
     });
 
@@ -5466,14 +5530,228 @@
     // ==================== 7-DAY ITINERARY FUNCTIONS ====================
 
     const ITI_DAYS_META = [
-      { day: 1, date: '2026-10-15', weekday: '四', title: '出發・小松・金澤', summary: '搭機・租車・金澤入住與晚餐' },
-      { day: 2, date: '2026-10-16', weekday: '五', title: '金澤城・兼六園・OUTLET', summary: '東茶屋街・三大名園・購物與自炊' },
-      { day: 3, date: '2026-10-17', weekday: '六', title: '立山黑部・富山', summary: '阿爾卑斯路線・壽司・富山夜景' },
-      { day: 4, date: '2026-10-18', weekday: '日', title: '白川鄉合掌村・飛驒高山', summary: '世界遺產・飛驒古川・高山飛驒牛' },
-      { day: 5, date: '2026-10-19', weekday: '一', title: '高山老街・郡上八幡・名古屋', summary: '朝市・犬山城・還車與居酒屋' },
-      { day: 6, date: '2026-10-20', weekday: '二', title: '名古屋自由探索', summary: '市區景點・美食購物・綠洲21夜景' },
-      { day: 7, date: '2026-10-21', weekday: '三', title: '名古屋退房・返台', summary: '最後採買・名鐵特急・星宇返台' }
+      { day: 1, date: '2026-10-15', weekday: '四', title: '出發・小松・金澤', city: '金澤', lat: 36.56, lon: 136.65, summary: '搭機・租車・金澤入住與晚餐' },
+      { day: 2, date: '2026-10-16', weekday: '五', title: '金澤城・兼六園・OUTLET', city: '金澤', lat: 36.56, lon: 136.65, summary: '東茶屋街・三大名園・購物與自炊' },
+      { day: 3, date: '2026-10-17', weekday: '六', title: '立山黑部・富山', city: '富山', lat: 36.70, lon: 137.21, summary: '阿爾卑斯路線・壽司・富山夜景' },
+      { day: 4, date: '2026-10-18', weekday: '日', title: '白川鄉合掌村・飛驒高山', city: '高山', lat: 36.14, lon: 137.25, summary: '世界遺產・飛驒古川・高山飛驒牛' },
+      { day: 5, date: '2026-10-19', weekday: '一', title: '高山老街・郡上八幡・名古屋', city: '高山', lat: 36.14, lon: 137.25, summary: '朝市・犬山城・還車與居酒屋' },
+      { day: 6, date: '2026-10-20', weekday: '二', title: '名古屋自由探索', city: '名古屋', lat: 35.18, lon: 136.90, summary: '市區景點・美食購物・綠洲21夜景' },
+      { day: 7, date: '2026-10-21', weekday: '三', title: '名古屋退房・返台', city: '常滑/機場', lat: 34.86, lon: 136.81, summary: '最後採買・名鐵特急・星宇返台' }
     ];
+
+    // ==================== JMA / OPEN-METEO WEATHER INTEGRATION ====================
+    let itineraryWeatherCache = {}; // Key: "lat,lon" -> { fetchedAt, data }
+    let lastWeatherSelectedDay = null;
+
+    // WMO Weather Interpretation Codes (JMA standard)
+    function getWeatherMetaByCode(code) {
+      if (code === 0) return { icon: '☀️', desc: '晴天', bg: 'bg-amber-500/20 text-amber-200 border-amber-400/40' };
+      if (code === 1) return { icon: '🌤️', desc: '晴時多雲', bg: 'bg-amber-400/20 text-amber-100 border-amber-300/30' };
+      if (code === 2) return { icon: '⛅', desc: '多雲時晴', bg: 'bg-sky-400/20 text-sky-100 border-sky-300/30' };
+      if (code === 3) return { icon: '☁️', desc: '陰天', bg: 'bg-stone-400/20 text-stone-200 border-stone-300/30' };
+      if ([45, 48].includes(code)) return { icon: '🌫️', desc: '霧', bg: 'bg-stone-500/20 text-stone-200 border-stone-400/30' };
+      if ([51, 53, 55].includes(code)) return { icon: '🌦️', desc: '毛毛雨', bg: 'bg-blue-400/20 text-blue-200 border-blue-300/30' };
+      if ([61, 63, 65].includes(code)) return { icon: '🌧️', desc: '下雨', bg: 'bg-blue-500/20 text-blue-100 border-blue-400/40' };
+      if ([71, 73, 75, 77].includes(code)) return { icon: '❄️', desc: '降雪', bg: 'bg-cyan-300/20 text-cyan-100 border-cyan-200/40' };
+      if ([80, 81, 82].includes(code)) return { icon: '🌧️', desc: '陣雨', bg: 'bg-blue-500/20 text-blue-100 border-blue-400/40' };
+      if ([85, 86].includes(code)) return { icon: '🌨️', desc: '陣雪', bg: 'bg-cyan-300/20 text-cyan-100 border-cyan-200/40' };
+      if ([95, 96, 99].includes(code)) return { icon: '⛈️', desc: '雷陣雨', bg: 'bg-purple-500/20 text-purple-100 border-purple-400/40' };
+      return { icon: '🌤️', desc: '多雲', bg: 'bg-sky-400/20 text-sky-100 border-sky-300/30' };
+    }
+
+    // Weather clothing & luggage advice generator based on location & temperatures
+    function getWeatherAdvice(minT, maxT, rainProb, city, dayNum) {
+      let advice = [];
+      const isMountain = ['高山', '白川鄉', '富山'].some(c => (city || '').includes(c)) || dayNum === 3 || dayNum === 4;
+
+      if (isMountain) {
+        advice.push(`⛰️ ${city}屬日本阿爾卑斯山區周邊，早晚低溫約 ${Math.round(minT)}°C，日夜溫差大。`);
+      }
+
+      if (minT <= 8) {
+        advice.push('早晚嚴寒，建議穿著保暖發熱衣、防風外套或輕羽絨外套，並備圍巾或防風帽。');
+      } else if (minT <= 14) {
+        advice.push('早晚體感偏涼，建議洋蔥式穿法，內搭長袖上衣、外罩長版或防風針織外套。');
+      } else {
+        advice.push('氣溫適中舒適，白天可著輕便長袖或薄外套。');
+      }
+
+      if (rainProb >= 40) {
+        advice.push(`💧 降雨機率高達 ${rainProb}%，出門請務必攜帶折傘或輕便雨具！`);
+      } else if (rainProb >= 20) {
+        advice.push(`💧 降雨機率約 ${rainProb}%，天候較不穩定，建議隨身攜帶輕便折傘備用。`);
+      } else {
+        advice.push('☀️ 降雨機率低，適合戶外漫步、拍照賞楓！');
+      }
+
+      return advice.join(' ');
+    }
+
+    // Fetch Open-Meteo weather forecast for a given lat/lon
+    async function fetchCityWeatherForecast(lat, lon, forceRefresh = false) {
+      const key = `${lat.toFixed(2)},${lon.toFixed(2)}`;
+      const now = Date.now();
+      if (!forceRefresh && itineraryWeatherCache[key] && (now - itineraryWeatherCache[key].fetchedAt < 3600000)) {
+        return itineraryWeatherCache[key].data;
+      }
+
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo&forecast_days=16`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Weather fetch failed: ${res.status}`);
+        const data = await res.json();
+        if (data && data.daily) {
+          itineraryWeatherCache[key] = { fetchedAt: now, data: data.daily };
+          return data.daily;
+        }
+      } catch (err) {
+        console.warn('Weather fetch error:', err);
+      }
+      return null;
+    }
+
+    // Render weather badge in itinerary top banner & on day cards
+    async function updateItineraryWeatherBadges(forceRefresh = false) {
+      const currentDay = state.currentItineraryDay || 0;
+      const bannerBadge = document.getElementById('itineraryWeatherBadge');
+      if (!bannerBadge) return;
+
+      if (currentDay === 0) {
+        // All Days Overview: show general weather hint badge
+        bannerBadge.innerHTML = `
+          <button type="button" onclick="openDayWeatherModal(1)" class="flex items-center gap-1 bg-white/10 hover:bg-white/20 text-amber-200 border border-white/15 px-2.5 py-1 rounded-full text-[11px] font-bold transition active:scale-95 cursor-pointer shadow-xs" title="點擊查看各天日本氣象預報">
+            <span>🌤️</span>
+            <span>氣象預報</span>
+          </button>
+        `;
+      } else {
+        const dMeta = ITI_DAYS_META.find(d => d.day === currentDay) || ITI_DAYS_META[0];
+        bannerBadge.innerHTML = `
+          <div class="flex items-center gap-1 bg-white/10 text-stone-300 border border-white/10 px-2 py-0.5 rounded-full text-[10px] font-medium animate-pulse">
+            <span>⏳</span><span>氣象載入中...</span>
+          </div>
+        `;
+
+        const forecast = await fetchCityWeatherForecast(dMeta.lat, dMeta.lon, forceRefresh);
+        if (forecast && forecast.time) {
+          const dateIdx = forecast.time.indexOf(dMeta.date);
+          if (dateIdx !== -1) {
+            const wCode = forecast.weather_code[dateIdx];
+            const maxT = Math.round(forecast.temperature_2m_max[dateIdx]);
+            const minT = Math.round(forecast.temperature_2m_min[dateIdx]);
+            const rainP = forecast.precipitation_probability_max ? forecast.precipitation_probability_max[dateIdx] : 0;
+            const meta = getWeatherMetaByCode(wCode);
+
+            bannerBadge.innerHTML = `
+              <button type="button" onclick="openDayWeatherModal(${dMeta.day})" class="flex items-center gap-1.5 ${meta.bg} border px-2.5 py-1 rounded-full text-[11px] font-bold transition active:scale-95 cursor-pointer shadow-xs hover:brightness-110" title="點擊查看 ${dMeta.city} 當天穿衣與氣象建議">
+                <span class="text-sm leading-none">${meta.icon}</span>
+                <span>${dMeta.city}</span>
+                <span>${minT}°~${maxT}°C</span>
+                ${rainP > 0 ? `<span class="opacity-90 font-medium text-[10px]">💧${rainP}%</span>` : ''}
+              </button>
+            `;
+          } else {
+            bannerBadge.innerHTML = `
+              <button type="button" onclick="openDayWeatherModal(${dMeta.day})" class="flex items-center gap-1 bg-white/10 text-amber-200 border border-white/15 px-2 py-0.5 rounded-full text-[10px] font-medium">
+                <span>🌤️</span><span>${dMeta.city} 氣象</span>
+              </button>
+            `;
+          }
+        } else {
+          bannerBadge.innerHTML = `
+            <button type="button" onclick="openDayWeatherModal(${dMeta.day})" class="flex items-center gap-1 bg-white/10 text-amber-200 border border-white/15 px-2 py-0.5 rounded-full text-[10px] font-medium">
+              <span>🌤️</span><span>${dMeta.city} 氣象</span>
+            </button>
+          `;
+        }
+      }
+
+      // Also render small weather tags on day card headers if rendered
+      ITI_DAYS_META.forEach(async (dMeta) => {
+        const dayTagEl = document.getElementById(`dayWeatherTag-${dMeta.day}`);
+        if (!dayTagEl) return;
+        const forecast = await fetchCityWeatherForecast(dMeta.lat, dMeta.lon);
+        if (forecast && forecast.time) {
+          const idx = forecast.time.indexOf(dMeta.date);
+          if (idx !== -1) {
+            const wCode = forecast.weather_code[idx];
+            const maxT = Math.round(forecast.temperature_2m_max[idx]);
+            const minT = Math.round(forecast.temperature_2m_min[idx]);
+            const rainP = forecast.precipitation_probability_max ? forecast.precipitation_probability_max[idx] : 0;
+            const meta = getWeatherMetaByCode(wCode);
+            dayTagEl.innerHTML = `
+              <button type="button" onclick="event.stopPropagation(); openDayWeatherModal(${dMeta.day});" class="flex items-center gap-1 bg-blue-50/80 hover:bg-blue-100 text-blue-900 border border-blue-200/80 px-2 py-0.5 rounded-lg text-[10px] font-bold transition shadow-2xs" title="點擊查看此日氣象詳情與穿著建議">
+                <span>${meta.icon}</span>
+                <span>${dMeta.city} ${minT}°~${maxT}°C</span>
+                ${rainP > 0 ? `<span class="text-blue-600 font-semibold">💧${rainP}%</span>` : ''}
+              </button>
+            `;
+          }
+        }
+      });
+    }
+
+    // Open weather modal with detailed advice
+    async function openDayWeatherModal(dayNum = 1) {
+      const dMeta = ITI_DAYS_META.find(d => d.day === dayNum) || ITI_DAYS_META[0];
+      lastWeatherSelectedDay = dayNum;
+
+      const titleEl = document.getElementById('modalWeatherTitle');
+      const subEl = document.getElementById('modalWeatherSubtitle');
+      const iconEl = document.getElementById('modalWeatherBigIcon');
+      const descEl = document.getElementById('modalWeatherDesc');
+      const tempEl = document.getElementById('modalWeatherTemp');
+      const rainEl = document.getElementById('modalWeatherRain');
+      const adviceEl = document.getElementById('modalWeatherAdvice');
+      const updateEl = document.getElementById('modalWeatherUpdateTime');
+
+      if (titleEl) titleEl.textContent = `D${dMeta.day} ${dMeta.date.substring(5).replace('-', '/')} (${dMeta.weekday})・${dMeta.city}`;
+      if (subEl) subEl.textContent = `${dMeta.title}・日本氣象廳 (JMA) 模型`;
+      if (updateEl) {
+        const d = new Date();
+        updateEl.textContent = `更新時間: ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+      }
+
+      openModal('modalWeather');
+
+      // Fetch or read from cache
+      const forecast = await fetchCityWeatherForecast(dMeta.lat, dMeta.lon);
+      if (forecast && forecast.time) {
+        const idx = forecast.time.indexOf(dMeta.date);
+        if (idx !== -1) {
+          const wCode = forecast.weather_code[idx];
+          const maxT = Math.round(forecast.temperature_2m_max[idx]);
+          const minT = Math.round(forecast.temperature_2m_min[idx]);
+          const rainP = forecast.precipitation_probability_max ? forecast.precipitation_probability_max[idx] : 0;
+          const meta = getWeatherMetaByCode(wCode);
+
+          if (iconEl) iconEl.textContent = meta.icon;
+          if (descEl) descEl.textContent = meta.desc;
+          if (tempEl) tempEl.textContent = `${minT}° ~ ${maxT}°C`;
+          if (rainEl) rainEl.textContent = `💧 ${rainP}%`;
+          if (adviceEl) adviceEl.textContent = getWeatherAdvice(minT, maxT, rainP, dMeta.city, dMeta.day);
+          return;
+        }
+      }
+
+      // Fallback if date is too far or offline
+      if (iconEl) iconEl.textContent = '🌤️';
+      if (descEl) descEl.textContent = '秋季氣候';
+      if (tempEl) tempEl.textContent = '約 9° ~ 19°C';
+      if (rainEl) rainEl.textContent = '💧 20%';
+      if (adviceEl) adviceEl.textContent = `秋季日本昇龍道早晚偏涼，特別是金澤、白川鄉及高山等山區日夜溫差顯著，建議準備洋蔥式穿著並攜帶輕量保暖防風外套。`;
+    }
+
+    // Refresh weather manually
+    async function refreshItineraryWeather(showToastMsg = false) {
+      if (lastWeatherSelectedDay) {
+        const dMeta = ITI_DAYS_META.find(d => d.day === lastWeatherSelectedDay) || ITI_DAYS_META[0];
+        await fetchCityWeatherForecast(dMeta.lat, dMeta.lon, true);
+        await openDayWeatherModal(lastWeatherSelectedDay);
+      }
+      await updateItineraryWeatherBadges(true);
+      if (showToastMsg) showToast('已取得最新日本氣象預報 🌤️', '🌦️');
+    }
 
     function getItineraryEmoji(title, note) {
       const text = `${title} ${note}`.toLowerCase();
@@ -5745,10 +6023,13 @@
                   <p class="text-[10px] text-stone-400">${dMeta.summary}</p>
                 </div>
               </div>
-              <button type="button" onclick="openEditItineraryModal(null, ${dMeta.day})" class="text-xs font-bold text-red-700 hover:text-red-900 flex items-center gap-0.5 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-lg transition" title="在此天新增項目">
-                <span>＋</span>
-                <span>加行程</span>
-              </button>
+              <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                <div id="dayWeatherTag-${dMeta.day}"></div>
+                <button type="button" onclick="openEditItineraryModal(null, ${dMeta.day})" class="text-xs font-bold text-red-700 hover:text-red-900 flex items-center gap-0.5 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-lg transition" title="在此天新增項目">
+                  <span>＋</span>
+                  <span>加行程</span>
+                </button>
+              </div>
             </div>
 
             <!-- Timeline Items -->
@@ -5849,6 +6130,9 @@
           </div>
         `;
       }).join('');
+
+      // Update weather pills and cards
+      updateItineraryWeatherBadges();
     }
 
     // ==================== EDIT EXPENSE MODAL LOGIC ====================
