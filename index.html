@@ -2121,9 +2121,13 @@
       state.currentItineraryDay = getAutoItineraryDay();
       checkUrlHashForData();
       renderAll();
+      setupEventListeners();
       const urlParams = new URLSearchParams(window.location.search);
       if (window.location.hash === '#itinerary' || urlParams.get('tab') === 'itinerary') {
         switchTab('itinerary');
+      }
+      if (urlParams.get('day')) {
+        setItineraryDayFilter(parseInt(urlParams.get('day')));
       }
       initCloudSync();
     });
@@ -5536,7 +5540,7 @@
       { day: 4, date: '2026-10-18', weekday: '日', title: '白川鄉合掌村・飛驒高山', city: '高山', lat: 36.14, lon: 137.25, summary: '世界遺產・飛驒古川・高山飛驒牛' },
       { day: 5, date: '2026-10-19', weekday: '一', title: '高山老街・郡上八幡・名古屋', city: '高山', lat: 36.14, lon: 137.25, summary: '朝市・犬山城・還車與居酒屋' },
       { day: 6, date: '2026-10-20', weekday: '二', title: '名古屋自由探索', city: '名古屋', lat: 35.18, lon: 136.90, summary: '市區景點・美食購物・綠洲21夜景' },
-      { day: 7, date: '2026-10-21', weekday: '三', title: '名古屋退房・返台', city: '常滑/機場', lat: 34.86, lon: 136.81, summary: '最後採買・名鐵特急・星宇返台' }
+      { day: 7, date: '2026-10-21', weekday: '三', title: '名古屋退房・返台', city: '名古屋', lat: 35.18, lon: 136.90, summary: '最後採買・名鐵特急・星宇返台' }
     ];
 
     // ==================== JMA / OPEN-METEO WEATHER INTEGRATION ====================
@@ -5680,10 +5684,10 @@
             const rainP = forecast.precipitation_probability_max ? forecast.precipitation_probability_max[idx] : 0;
             const meta = getWeatherMetaByCode(wCode);
             dayTagEl.innerHTML = `
-              <button type="button" onclick="event.stopPropagation(); openDayWeatherModal(${dMeta.day});" class="flex items-center gap-1 bg-blue-50/80 hover:bg-blue-100 text-blue-900 border border-blue-200/80 px-2 py-0.5 rounded-lg text-[10px] font-bold transition shadow-2xs" title="點擊查看此日氣象詳情與穿著建議">
-                <span>${meta.icon}</span>
-                <span>${dMeta.city} ${minT}°~${maxT}°C</span>
-                ${rainP > 0 ? `<span class="text-blue-600 font-semibold">💧${rainP}%</span>` : ''}
+              <button type="button" onclick="event.stopPropagation(); openDayWeatherModal(${dMeta.day});" class="inline-flex items-center gap-1 bg-blue-50/90 hover:bg-blue-100 text-blue-900 border border-blue-200/90 px-1.5 py-0.5 rounded-lg text-[10px] font-bold transition shadow-2xs whitespace-nowrap flex-shrink-0 cursor-pointer" title="點擊查看此日氣象詳情與穿著建議">
+                <span class="text-xs leading-none">${meta.icon}</span>
+                <span class="whitespace-nowrap">${dMeta.city} ${minT}°~${maxT}°C</span>
+                ${rainP > 0 ? `<span class="text-blue-600 font-semibold whitespace-nowrap">💧${rainP}%</span>` : ''}
               </button>
             `;
           }
@@ -6013,19 +6017,19 @@
           <div class="bg-white/95 rounded-3xl p-4 shadow-sm border border-stone-200/90 space-y-3">
             
             <!-- Day Header Card -->
-            <div class="flex items-center justify-between border-b border-stone-100 pb-2.5">
-              <div class="flex items-center gap-2">
-                <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-red-700 to-amber-700 text-white font-black text-xs flex items-center justify-center shadow-xs">
+            <div class="flex items-start justify-between border-b border-stone-100 pb-2.5 gap-2">
+              <div class="flex items-start gap-2 min-w-0 flex-1">
+                <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-red-700 to-amber-700 text-white font-black text-xs flex items-center justify-center shadow-xs flex-shrink-0 mt-0.5">
                   D${dMeta.day}
                 </span>
-                <div>
-                  <h4 class="font-extrabold text-sm text-stone-900">${dMeta.date.substring(5).replace('-', '/')} (${dMeta.weekday})・${dMeta.title}</h4>
-                  <p class="text-[10px] text-stone-400">${dMeta.summary}</p>
+                <div class="min-w-0 flex-1">
+                  <h4 class="font-extrabold text-sm text-stone-900 leading-snug break-words">${dMeta.date.substring(5).replace('-', '/')} (${dMeta.weekday})・${dMeta.title}</h4>
+                  <p class="text-[10px] text-stone-400 truncate">${dMeta.summary}</p>
                 </div>
               </div>
-              <div class="flex items-center gap-1.5 flex-wrap justify-end">
+              <div class="flex flex-col items-end gap-1 flex-shrink-0">
                 <div id="dayWeatherTag-${dMeta.day}"></div>
-                <button type="button" onclick="openEditItineraryModal(null, ${dMeta.day})" class="text-xs font-bold text-red-700 hover:text-red-900 flex items-center gap-0.5 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-lg transition" title="在此天新增項目">
+                <button type="button" onclick="openEditItineraryModal(null, ${dMeta.day})" class="text-[11px] font-bold text-red-700 hover:text-red-900 flex items-center gap-0.5 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded-lg transition shadow-2xs" title="在此天新增項目">
                   <span>＋</span>
                   <span>加行程</span>
                 </button>
