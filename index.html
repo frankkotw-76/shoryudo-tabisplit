@@ -1903,6 +1903,20 @@
         </div>
       </div>
 
+      <!-- Hourly Forecast Timeline -->
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between text-xs font-bold text-stone-700">
+          <div class="flex items-center gap-1.5">
+            <span>⏱️</span>
+            <span>當日分時氣象 (每小時)</span>
+          </div>
+          <span class="text-[10px] text-stone-400 font-normal">左右滑動 ➔</span>
+        </div>
+        <div id="modalWeatherHourlyContainer" class="flex gap-2 overflow-x-auto pb-1 pt-0.5 no-scrollbar">
+          <div class="py-3 text-center text-xs text-stone-400 w-full animate-pulse">⏳ 載入分時氣象中...</div>
+        </div>
+      </div>
+
       <!-- Clothing Advice Box -->
       <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-3.5 border border-amber-200/70 space-y-1.5">
         <div class="flex items-center gap-1.5 text-xs font-bold text-amber-900">
@@ -5600,13 +5614,18 @@
       }
 
       try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo&forecast_days=16`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&hourly=temperature_2m,precipitation_probability,weather_code&timezone=Asia%2FTokyo&forecast_days=16`;
         const res = await fetch(url);
         if (!res.ok) throw new Error(`Weather fetch failed: ${res.status}`);
         const data = await res.json();
         if (data && data.daily) {
-          itineraryWeatherCache[key] = { fetchedAt: now, data: data.daily };
-          return data.daily;
+          const combined = {
+            ...data.daily,
+            daily: data.daily,
+            hourly: data.hourly || null
+          };
+          itineraryWeatherCache[key] = { fetchedAt: now, data: combined };
+          return combined;
         }
       } catch (err) {
         console.warn('Weather fetch error:', err);
@@ -5708,12 +5727,16 @@
       const rainEl = document.getElementById('modalWeatherRain');
       const adviceEl = document.getElementById('modalWeatherAdvice');
       const updateEl = document.getElementById('modalWeatherUpdateTime');
+      const hourlyEl = document.getElementById('modalWeatherHourlyContainer');
 
       if (titleEl) titleEl.textContent = `D${dMeta.day} ${dMeta.date.substring(5).replace('-', '/')} (${dMeta.weekday})・${dMeta.city}`;
       if (subEl) subEl.textContent = `${dMeta.title}・日本氣象廳 (JMA) 模型`;
       if (updateEl) {
         const d = new Date();
         updateEl.textContent = `更新時間: ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+      }
+      if (hourlyEl) {
+        hourlyEl.innerHTML = '<div class="py-3 text-center text-xs text-stone-400 w-full animate-pulse">⏳ 載入分時氣象中...</div>';
       }
 
       openModal('modalWeather');
@@ -5734,6 +5757,40 @@
           if (tempEl) tempEl.textContent = `${minT}° ~ ${maxT}°C`;
           if (rainEl) rainEl.textContent = `💧 ${rainP}%`;
           if (adviceEl) adviceEl.textContent = getWeatherAdvice(minT, maxT, rainP, dMeta.city, dMeta.day);
+
+          // Populate Hourly Timeline
+          if (hourlyEl) {
+            if (forecast.hourly && Array.isArray(forecast.hourly.time)) {
+              const hTimes = forecast.hourly.time;
+              const hTemps = forecast.hourly.temperature_2m;
+              const hCodes = forecast.hourly.weather_code;
+              const hRains = forecast.hourly.precipitation_probability || [];
+              let hHtml = '';
+              for (let i = 0; i < hTimes.length; i++) {
+                const tStr = hTimes[i];
+                if (tStr.startsWith(dMeta.date)) {
+                  const hourStr = tStr.substring(11, 16);
+                  const hT = Math.round(hTemps[i]);
+                  const hCode = hCodes[i];
+                  const hRain = hRains[i] !== undefined ? hRains[i] : 0;
+                  const hMeta = getWeatherMetaByCode(hCode);
+                  hHtml += `
+                    <div class="flex-shrink-0 flex flex-col items-center justify-between w-14 py-2 px-1 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs text-center space-y-1">
+                      <span class="text-[10px] font-bold text-stone-500">${hourStr}</span>
+                      <span class="text-base leading-none my-0.5">${hMeta.icon}</span>
+                      <span class="text-xs font-black text-stone-800">${hT}°</span>
+                      <span class="text-[10px] font-bold ${hRain >= 30 ? 'text-blue-600' : (hRain > 0 ? 'text-blue-400' : 'text-stone-300')}">
+                        ${hRain > 0 ? `💧${hRain}%` : '—'}
+                      </span>
+                    </div>
+                  `;
+                }
+              }
+              hourlyEl.innerHTML = hHtml || '<div class="py-2 text-center text-xs text-stone-400 w-full">尚無分時預報資料</div>';
+            } else {
+              hourlyEl.innerHTML = '<div class="py-2 text-center text-xs text-stone-400 w-full">暫無分時預報資料</div>';
+            }
+          }
           return;
         }
       }
@@ -5744,6 +5801,9 @@
       if (tempEl) tempEl.textContent = '約 9° ~ 19°C';
       if (rainEl) rainEl.textContent = '💧 20%';
       if (adviceEl) adviceEl.textContent = `秋季日本昇龍道早晚偏涼，特別是金澤、白川鄉及高山等山區日夜溫差顯著，建議準備洋蔥式穿著並攜帶輕量保暖防風外套。`;
+      if (hourlyEl) {
+        hourlyEl.innerHTML = '<div class="py-2 text-center text-xs text-stone-400 w-full">暫無分時資料 (未在預報天數內或離線)</div>';
+      }
     }
 
     // Refresh weather manually
