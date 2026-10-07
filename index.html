@@ -1898,7 +1898,7 @@
             <span>⏱️</span>
             <span>當日分時氣象 (每小時)</span>
           </div>
-          <span class="text-[10px] text-stone-400 font-normal">左右滑動 ➔</span>
+          <span id="modalWeatherHourlyHint" class="text-[10px] text-stone-400 font-normal">左右滑動 ➔</span>
         </div>
         <div id="modalWeatherHourlyContainer" class="flex gap-2 overflow-x-auto pb-1 pt-0.5 no-scrollbar">
           <div class="py-3 text-center text-xs text-stone-400 w-full animate-pulse">⏳ 載入分時氣象中...</div>
@@ -5694,22 +5694,60 @@
           // Populate Hourly Timeline
           if (hourlyEl) {
             if (forecast.hourly && Array.isArray(forecast.hourly.time)) {
+              let nowTokyoStr = '';
+              let nowTokyoHour = -1;
+              try {
+                const dFmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit' });
+                nowTokyoStr = dFmt.format(new Date());
+                const hFmt = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Tokyo', hour: 'numeric', hour12: false });
+                nowTokyoHour = parseInt(hFmt.format(new Date()), 10);
+              } catch (e) {
+                const d = new Date();
+                nowTokyoStr = d.toISOString().substring(0, 10);
+                nowTokyoHour = d.getHours();
+              }
+
+              const isToday = (dMeta.date === nowTokyoStr);
+              const targetHour = isToday ? nowTokyoHour : 7;
+
+              const hintEl = document.getElementById('modalWeatherHourlyHint');
+              if (hintEl) {
+                hintEl.textContent = isToday 
+                  ? `📍 已定位現在 (${nowTokyoHour.toString().padStart(2, '0')}:00)` 
+                  : `🌅 已定位出門時段 (07:00)`;
+              }
+
               const hTimes = forecast.hourly.time;
               const hTemps = forecast.hourly.temperature_2m;
               const hCodes = forecast.hourly.weather_code;
               const hRains = forecast.hourly.precipitation_probability || [];
               let hHtml = '';
+              let targetFound = false;
+
               for (let i = 0; i < hTimes.length; i++) {
                 const tStr = hTimes[i];
                 if (tStr.startsWith(dMeta.date)) {
                   const hourStr = tStr.substring(11, 16);
+                  const hourNum = parseInt(hourStr.substring(0, 2), 10);
+                  const isCurrentNow = isToday && (hourNum === nowTokyoHour);
+                  const isTarget = (!targetFound && (hourNum >= targetHour));
+                  if (isTarget) targetFound = true;
+
                   const hT = Math.round(hTemps[i]);
                   const hCode = hCodes[i];
                   const hRain = hRains[i] !== undefined ? hRains[i] : 0;
                   const hMeta = getWeatherMetaByCode(hCode);
+
                   hHtml += `
-                    <div class="flex-shrink-0 flex flex-col items-center justify-between w-14 py-2 px-1 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs text-center space-y-1">
-                      <span class="text-[10px] font-bold text-stone-500">${hourStr}</span>
+                    <div ${isTarget ? 'id="hourlyPill-target"' : ''} class="flex-shrink-0 flex flex-col items-center justify-between w-14 py-2 px-1 rounded-2xl ${
+                      isCurrentNow 
+                        ? 'bg-amber-100/80 border-2 border-amber-400 ring-2 ring-amber-200/60 shadow-xs' 
+                        : 'bg-stone-50 border border-stone-200/80 shadow-2xs'
+                    } text-center space-y-1 transition">
+                      <div class="flex flex-col items-center">
+                        ${isCurrentNow ? `<span class="text-[9px] bg-red-600 text-white px-1 py-0.2 rounded font-black leading-none mb-0.5">現在</span>` : ''}
+                        <span class="text-[10px] font-bold ${isCurrentNow ? 'text-amber-950 font-black' : 'text-stone-500'}">${hourStr}</span>
+                      </div>
                       <span class="text-base leading-none my-0.5">${hMeta.icon}</span>
                       <span class="text-xs font-black text-stone-800">${hT}°</span>
                       <span class="text-[10px] font-bold ${hRain >= 30 ? 'text-blue-600' : (hRain > 0 ? 'text-blue-400' : 'text-stone-300')}">
@@ -5720,6 +5758,15 @@
                 }
               }
               hourlyEl.innerHTML = hHtml || '<div class="py-2 text-center text-xs text-stone-400 w-full">尚無分時預報資料</div>';
+
+              // Smoothly auto-scroll to the target hour pill
+              setTimeout(() => {
+                const targetEl = document.getElementById('hourlyPill-target');
+                if (targetEl && hourlyEl) {
+                  const scrollPos = targetEl.offsetLeft - hourlyEl.offsetLeft - 12;
+                  hourlyEl.scrollLeft = Math.max(0, scrollPos);
+                }
+              }, 60);
             } else {
               hourlyEl.innerHTML = '<div class="py-2 text-center text-xs text-stone-400 w-full">暫無分時預報資料</div>';
             }
